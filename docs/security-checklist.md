@@ -6,3 +6,4 @@
 - [ ] Tool-call schema validated (no raw tool execution from untrusted output).
 - [ ] Logs redact sensitive paths and tokens.
 - [ ] Local model license obligations reviewed.
+- [ ] Docker images pinned to immutable digests (not `latest` tags).
