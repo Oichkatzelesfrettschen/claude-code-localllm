@@ -7,6 +7,7 @@ import argparse
 import json
 import urllib.error
 import urllib.request
+from typing import Any, Dict, Optional, Tuple
 
 
 def parse_args() -> argparse.Namespace:
@@ -17,6 +18,52 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--a", type=int, default=2, help="First operand")
     parser.add_argument("--b", type=int, default=3, help="Second operand")
     return parser.parse_args()
+
+
+def parse_arguments(raw: Any) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+    if raw is None:
+        return None, "missing arguments"
+    if isinstance(raw, dict):
+        return raw, None
+    if isinstance(raw, str):
+        try:
+            parsed = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            return None, f"arguments not valid JSON ({exc})"
+        if not isinstance(parsed, dict):
+            return None, "arguments JSON is not an object"
+        return parsed, None
+    return None, f"unsupported arguments type: {type(raw).__name__}"
+
+
+def validate_tool_call(message: Dict[str, Any], tool_name: str, a: int, b: int) -> Tuple[bool, str]:
+    tool_calls = message.get("tool_calls")
+    if not tool_calls:
+        content = message.get("content", "")
+        return False, f"missing tool_calls (content={content})"
+
+    first = tool_calls[0] if isinstance(tool_calls, list) else None
+    if not isinstance(first, dict):
+        return False, "tool_calls[0] is not an object"
+
+    function = first.get("function")
+    if not isinstance(function, dict):
+        return False, "tool_calls[0].function missing or invalid"
+
+    name = function.get("name")
+    if name != tool_name:
+        return False, f"unexpected function name ({name})"
+
+    args, err = parse_arguments(function.get("arguments"))
+    if err:
+        return False, err
+
+    got_a = args.get("a")
+    got_b = args.get("b")
+    if got_a != a or got_b != b:
+        return False, f"unexpected arguments (a={got_a}, b={got_b})"
+
+    return True, "ok"
 
 
 def main() -> int:
@@ -64,14 +111,11 @@ def main() -> int:
         return 1
 
     message = data.get("choices", [{}])[0].get("message", {})
-    tool_calls = message.get("tool_calls")
-
-    if tool_calls:
+    ok, reason = validate_tool_call(message, args.tool_name, args.a, args.b)
+    if ok:
         print("Tool-call compliant")
         return 0
-
-    content = message.get("content", "")
-    print("Tool-call missing; model returned content:", content)
+    print(f"Tool-call invalid: {reason}")
     return 1
 
 

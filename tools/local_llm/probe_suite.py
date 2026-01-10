@@ -8,7 +8,7 @@ import json
 import urllib.error
 import urllib.request
 from pathlib import Path
-from typing import List, Dict
+from typing import Any, Dict, List, Optional, Tuple
 
 
 def parse_args() -> argparse.Namespace:
@@ -22,8 +22,46 @@ def load_models(path: Path) -> List[str]:
     data = json.loads(path.read_text(encoding="utf-8"))
     return list(data.get("models", []))
 
+def parse_arguments(raw: Any) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+    if raw is None:
+        return None, "missing arguments"
+    if isinstance(raw, dict):
+        return raw, None
+    if isinstance(raw, str):
+        try:
+            parsed = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            return None, f"arguments not valid JSON ({exc})"
+        if not isinstance(parsed, dict):
+            return None, "arguments JSON is not an object"
+        return parsed, None
+    return None, f"unsupported arguments type: {type(raw).__name__}"
 
-def probe_model(url: str, model: str) -> bool:
+
+def validate_add_call(message: Dict[str, Any]) -> Tuple[bool, str]:
+    tool_calls = message.get("tool_calls")
+    if not tool_calls:
+        content = message.get("content", "")
+        return False, f"missing tool_calls (content={content})"
+    if not isinstance(tool_calls, list) or not tool_calls:
+        return False, "tool_calls is not a non-empty list"
+    first = tool_calls[0]
+    if not isinstance(first, dict):
+        return False, "tool_calls[0] is not an object"
+    function = first.get("function")
+    if not isinstance(function, dict):
+        return False, "tool_calls[0].function missing or invalid"
+    if function.get("name") != "add":
+        return False, f"unexpected function name ({function.get('name')})"
+    args, err = parse_arguments(function.get("arguments"))
+    if err:
+        return False, err
+    if args.get("a") != 2 or args.get("b") != 3:
+        return False, f"unexpected arguments (a={args.get('a')}, b={args.get('b')})"
+    return True, "ok"
+
+
+def probe_model(url: str, model: str) -> Tuple[bool, str]:
     payload = {
         "model": model,
         "messages": [
@@ -60,10 +98,10 @@ def probe_model(url: str, model: str) -> bool:
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace").strip()
         detail = body or "no error body"
-        raise RuntimeError(f"HTTP {exc.code} ({detail})") from exc
+        return False, f"HTTP {exc.code} ({detail})"
 
     message = data.get("choices", [{}])[0].get("message", {})
-    return bool(message.get("tool_calls"))
+    return validate_add_call(message)
 
 
 def main() -> int:
@@ -74,12 +112,9 @@ def main() -> int:
 
     failures: Dict[str, str] = {}
     for model in models:
-        try:
-            ok = probe_model(args.url, model)
-            if not ok:
-                failures[model] = "missing tool_calls"
-        except RuntimeError as exc:
-            failures[model] = str(exc)
+        ok, reason = probe_model(args.url, model)
+        if not ok:
+            failures[model] = reason
 
     if failures:
         for model, reason in failures.items():
