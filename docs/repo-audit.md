@@ -28,11 +28,11 @@ It now includes a minimal `Makefile` for validation utilities. It contains:
 
 ## File-Type Breakdown (Counts)
 Based on a full recursive listing:
-- Markdown: 101 files
-- JSON: 23 files
+- Markdown: 133 files
+- JSON: 31 files
 - YAML: 16 files
-- Shell scripts: 15 files
-- Python: 12 files
+- Shell scripts: 16 files
+- Python: 20 files
 - TypeScript: 2 files
 
 ## Executable Surfaces and Dependencies
@@ -84,7 +84,7 @@ Based on a full recursive listing:
 | Claude Code is proprietary | License is all-rights-reserved | `LICENSE.md` | Verified |
 | Proxy env vars exist | Proxy-related env vars appear in release notes | `CHANGELOG.md` | Verified |
 | Router supports `ANTHROPIC_BASE_URL` | Router README documents env activation | `claude-code-router` README | Verified |
-| Mistral/Qwen/Phi licenses | Model cards list Apache-2.0 or MIT | HF model cards | Verified |
+| Mistral/Qwen/Phi licenses | HF metadata reports Apache-2.0 or MIT | HF model API | Verified |
 | Llama 3 restrictions | License forbids using outputs to improve other LLMs | Llama 3 LICENSE | Verified |
 
 ## Assertions from Draft That Remain Unverified
@@ -113,3 +113,4 @@ evidence:
 2) Document supply-chain risk for AUR `devcontainer-cli` or switch to a verified
    install path.
 3) Codify routing policy as a separate config and validate with tests.
+4) Expand runtime-aware routing (VRAM pressure, timeouts, and stable fallbacks).
