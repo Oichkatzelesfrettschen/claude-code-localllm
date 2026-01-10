@@ -11,6 +11,13 @@ This consolidates:
 - Working branch: `local-llm-integration` (docs + probes + plugin).
 - Local tool-call validation (Ollama): PASS `llama3.1:latest`, `mistral:latest`, `qwen2.5:7b-instruct`; FAIL `phi3:latest`, `qwen2.5-coder:7b`.
 
+## Completed Milestones (this repo)
+- `Makefile` harness for probes and verification targets.
+- Tool-call probe suite with strict conformance checks (`tools/local_llm/*probe*.py`).
+- Policy engine with optional VRAM-aware escalation inputs (`tools/local_llm/policy_engine.py`).
+- NVIDIA VRAM snapshot tool (`tools/local_llm/vram_probe.py`).
+- Router-management plugin (`plugins/local-llm-router/`).
+
 ## North Star
 Local-first for safe/routine work, with deterministic escalation to Claude for:
 - Sensitive paths / restricted data
