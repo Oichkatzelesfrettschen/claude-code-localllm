@@ -4,6 +4,7 @@ This consolidates:
 - Strategy + phases: `docs/local-llm-integration-roadmap.md`
 - Operational steps: `docs/local-llm-setup.md`, `docs/operator-runbook.md`
 - Current backlog: `docs/todo.md`
+- Offload strategy: `docs/offload-playbook.md`
 
 ## Current State (Snapshot)
 - Upstream sync: `main` tracks `anthropics/claude-code` (`upstream/main`).
@@ -66,4 +67,3 @@ Local-first for safe/routine work, with deterministic escalation to Claude for:
 - [ ] Document reproducible setup steps end-to-end (Arch/CachyOS) with exact package names.
 - [ ] Add a “known limitations” section (unsupported models, licensing constraints, unsupported configs).
 - [ ] Run a re-audit after each milestone and update `docs/todo.md` accordingly.
-
