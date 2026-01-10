@@ -42,6 +42,14 @@ NOTE: If installing with NPM, you also need to install [Node.js 18+](https://nod
 
 This repository includes several Claude Code plugins that extend functionality with custom commands and agents. See the [plugins directory](./plugins/README.md) for detailed documentation on available plugins.
 
+## Local LLM routing (this fork)
+
+This fork adds documentation and tooling for experimenting with local-first routing (with escalation back to Claude) via an external router/proxy.
+
+- Docs and roadmap: `docs/local-llm-integration-roadmap.md`
+- Quickstart: `docs/local-llm-setup.md`
+- Probes and policy tooling: `tools/local_llm/` and `make tool-probe`
+
 ## Reporting Bugs
 
 We welcome your feedback. Use the `/bug` command to report issues directly within Claude Code, or file a [GitHub issue](https://github.com/anthropics/claude-code/issues).

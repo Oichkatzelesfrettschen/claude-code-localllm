@@ -62,10 +62,10 @@ Based on a full recursive listing:
 - Hookify docs reference Python regex and local `.claude` rule files.
 
 ## Known Gaps and Errors
-- No build/test harness exists. Any automated validation must be added.
+- `Makefile` targets exist for probes and verification, but they are not wired into CI.
 - `devcontainer` CLI was missing on this machine (now installed via AUR).
 - `pwsh` was missing (now installed from `powershell-bin`).
-- No `gemini.md` exists; user requested no creation.
+- No `gemini.md` exists yet; add only after validating a Gemini proxy/routing path with primary sources.
 - AUR `devcontainer-cli` emits a "Skipping verification of source file PGP
   signatures" warning. This is a supply-chain risk and must be documented.
 - npm tarball integrity for `@devcontainers/cli@0.80.3` was verified against the
