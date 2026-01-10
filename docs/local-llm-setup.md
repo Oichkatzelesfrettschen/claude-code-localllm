@@ -1,5 +1,9 @@
 # Local LLM Setup (POC)
 
+## 0) Prereqs (GPU optional)
+- CPU-only works, but CUDA improves latency.
+- If using NVIDIA, ensure `nvidia-smi` and `ollama` work and the Ollama CUDA runtime is installed.
+
 ## 1) Start Ollama
 ```
 ollama serve
@@ -33,6 +37,7 @@ ccr status
 make tool-probe
 make probe-suite
 make runtime-probe
+make vram-probe
 ```
 
 ## Troubleshooting

@@ -52,3 +52,9 @@ Measure average latency and tokens/sec:
 ```
 make latency-probe
 ```
+
+## VRAM Probe (NVIDIA)
+Capture a snapshot of GPU VRAM pressure (useful for routing decisions):
+```
+make vram-probe
+```
