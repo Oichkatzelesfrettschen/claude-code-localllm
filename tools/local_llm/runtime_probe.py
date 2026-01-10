@@ -102,6 +102,8 @@ def probe_tool_calls(url: str, model: str, timeout_sec: int) -> Dict[str, Any]:
         return {"ok": False, "error": f"HTTP {exc.code} ({detail})"}
     except urllib.error.URLError as exc:
         return {"ok": False, "error": f"URL error ({exc})"}
+    except TimeoutError as exc:
+        return {"ok": False, "error": f"timeout ({exc})"}
 
     message = data.get("choices", [{}])[0].get("message", {})
     ok, reason = validate_add_call(message)
@@ -134,6 +136,8 @@ def probe_latency(url: str, model: str, prompt: str, iterations: int, timeout_se
             return {"ok": False, "error": f"HTTP {exc.code} ({detail})"}
         except urllib.error.URLError as exc:
             return {"ok": False, "error": f"URL error ({exc})"}
+        except TimeoutError as exc:
+            return {"ok": False, "error": f"timeout ({exc})"}
         elapsed = time.time() - start
         usage = data.get("usage", {})
         output_tokens = int(usage.get("completion_tokens", 0))
