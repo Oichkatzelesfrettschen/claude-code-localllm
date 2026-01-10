@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import socket
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -17,6 +18,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--url", required=True, help="Chat completions URL")
     parser.add_argument("--config", required=True, help="Path to models JSON")
+    parser.add_argument("--timeout-sec", type=int, default=60, help="Request timeout")
     return parser.parse_args()
 
 
@@ -25,7 +27,7 @@ def load_models(path: Path) -> List[str]:
     return list(data.get("models", []))
 
 
-def probe_model(url: str, model: str) -> tuple[bool, str]:
+def probe_model(url: str, model: str, timeout_sec: int) -> tuple[bool, str]:
     payload = create_add_tool_payload(model)
 
     request = urllib.request.Request(
@@ -36,12 +38,22 @@ def probe_model(url: str, model: str) -> tuple[bool, str]:
     )
 
     try:
-        with urllib.request.urlopen(request) as response:
-            data = json.loads(response.read().decode("utf-8"))
+        with urllib.request.urlopen(request, timeout=timeout_sec) as response:
+            raw = response.read().decode("utf-8", errors="replace")
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            return False, f"non-JSON response ({exc})"
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace").strip()
         detail = body or "no error body"
         return False, f"HTTP {exc.code} ({detail})"
+    except urllib.error.URLError as exc:
+        return False, f"URL error ({exc})"
+    except TimeoutError as exc:
+        return False, f"timeout ({exc})"
+    except socket.timeout as exc:
+        return False, f"timeout ({exc})"
 
     message = data.get("choices", [{}])[0].get("message", {})
     return validate_add_call(message)
@@ -55,7 +67,7 @@ def main() -> int:
 
     failures: Dict[str, str] = {}
     for model in models:
-        ok, reason = probe_model(args.url, model)
+        ok, reason = probe_model(args.url, model, timeout_sec=args.timeout_sec)
         if not ok:
             failures[model] = reason
 
