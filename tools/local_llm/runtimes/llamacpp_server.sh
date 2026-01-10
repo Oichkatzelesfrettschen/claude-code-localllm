@@ -19,7 +19,7 @@ set -euo pipefail
 MODEL_PATH="${1:-}"
 if [[ -z "${MODEL_PATH}" ]]; then
   echo "Usage: $0 /path/to/model.gguf" >&2
-  exit 2
+  exit 1
 fi
 
 HOST="${HOST:-127.0.0.1}"

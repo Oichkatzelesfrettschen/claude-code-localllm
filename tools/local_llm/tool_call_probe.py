@@ -8,7 +8,9 @@ import json
 import socket
 import urllib.error
 import urllib.request
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict
+
+from probe_common import parse_arguments
 
 
 def parse_args() -> argparse.Namespace:
@@ -23,23 +25,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def parse_arguments(raw: Any) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
-    if raw is None:
-        return None, "missing arguments"
-    if isinstance(raw, dict):
-        return raw, None
-    if isinstance(raw, str):
-        try:
-            parsed = json.loads(raw)
-        except json.JSONDecodeError as exc:
-            return None, f"arguments not valid JSON ({exc})"
-        if not isinstance(parsed, dict):
-            return None, "arguments JSON is not an object"
-        return parsed, None
-    return None, f"unsupported arguments type: {type(raw).__name__}"
-
-
-def validate_tool_call(message: Dict[str, Any], tool_name: str, a: int, b: int) -> Tuple[bool, str]:
+def validate_tool_call(message: Dict[str, Any], tool_name: str, a: int, b: int) -> tuple[bool, str]:
     tool_calls = message.get("tool_calls")
     if not tool_calls:
         content = message.get("content", "")
