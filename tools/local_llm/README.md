@@ -22,6 +22,15 @@ python3 tools/local_llm/policy_engine.py \
   --paths README.md
 ```
 
+Optional: include VRAM signal (for runtime-aware escalation):
+```
+python3 tools/local_llm/vram_probe.py > /tmp/vram.json
+python3 tools/local_llm/policy_engine.py \
+  --rules tools/local_llm/policy_rules.json \
+  --vram-sample /tmp/vram.json \
+  --paths README.md
+```
+
 ## probe_suite.py
 Run tool-call probes across a model list:
 ```
@@ -51,4 +60,10 @@ Run tool-call + latency probes across runtimes:
 python3 tools/local_llm/runtime_probe.py \
   --config tools/local_llm/runtime_matrix.json \
   --output /tmp/runtime_probe.json
+```
+
+## vram_probe.py
+Probe NVIDIA GPU VRAM pressure (useful for routing/policy inputs):
+```
+python3 tools/local_llm/vram_probe.py
 ```

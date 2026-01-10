@@ -33,6 +33,7 @@ Always route to Claude if any file path matches:
 - Streaming or schema mismatch in tool calls.
 - Context length exceeds configured threshold.
 - Model reports low confidence or violates system prompt.
+- Low free VRAM or runtime instability on the local GPU.
 - Any policy violation or missing dependency.
 
 ## Example Policy Evaluation
@@ -54,3 +55,5 @@ route: Claude-only
 - `claude_models[]` with pricing
 - `denylist_paths[]` and `denylist_patterns[]`
 - `escalation_retry_limit`
+- Optional runtime inputs:
+  - `min_free_vram_mib` / `min_free_vram_ratio` (set to `0` to disable)

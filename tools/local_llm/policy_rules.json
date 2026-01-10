@@ -13,5 +13,7 @@
     "**/security/**",
     "**/infra/**"
   ],
-  "long_context_threshold_tokens": 60000
+  "long_context_threshold_tokens": 60000,
+  "min_free_vram_mib": 0,
+  "min_free_vram_ratio": 0.0
 }

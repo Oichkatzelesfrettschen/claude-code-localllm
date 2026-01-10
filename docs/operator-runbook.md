@@ -31,4 +31,5 @@ npm update -g @musistudio/claude-code-router
 make tool-probe
 make probe-suite
 make runtime-probe
+make vram-probe
 ```

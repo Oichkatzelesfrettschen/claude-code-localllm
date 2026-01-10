@@ -5,7 +5,7 @@ NPM_PACKAGE ?= @devcontainers/cli
 NPM_VERSION ?= 0.80.3
 NPM_TARBALL ?= /tmp/devcontainer-cli-0.80.3.tgz
 
-.PHONY: verify-devcontainer cost-model tool-probe policy-check probe-suite probe-suite-candidates latency-probe runtime-probe
+.PHONY: verify-devcontainer cost-model tool-probe policy-check probe-suite probe-suite-candidates latency-probe runtime-probe vram-probe
 
 verify-devcontainer:
 	curl -L -o "$(NPM_TARBALL)" "https://registry.npmjs.org/$(NPM_PACKAGE)/-/cli-$(NPM_VERSION).tgz"
@@ -45,3 +45,6 @@ latency-probe:
 runtime-probe:
 	$(PYTHON) tools/local_llm/runtime_probe.py \
 		--config tools/local_llm/runtime_matrix.json
+
+vram-probe:
+	$(PYTHON) tools/local_llm/vram_probe.py
