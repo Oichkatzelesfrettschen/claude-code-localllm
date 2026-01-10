@@ -8,7 +8,7 @@ import json
 import urllib.error
 import urllib.request
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Dict, List
 
 from probe_common import create_add_tool_payload, validate_add_call
 

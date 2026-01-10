@@ -4,10 +4,10 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, Optional, Tuple
+from typing import Any
 
 
-def parse_arguments(raw: Any) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+def parse_arguments(raw: Any) -> tuple[dict[str, Any] | None, str | None]:
     """Parse tool call arguments from various formats.
     
     Args:
@@ -31,7 +31,7 @@ def parse_arguments(raw: Any) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
     return None, f"unsupported arguments type: {type(raw).__name__}"
 
 
-def validate_add_call(message: Dict[str, Any]) -> Tuple[bool, str]:
+def validate_add_call(message: dict[str, Any]) -> tuple[bool, str]:
     """Validate that a message contains a valid 'add' tool call with a=2, b=3.
     
     Args:
@@ -62,7 +62,7 @@ def validate_add_call(message: Dict[str, Any]) -> Tuple[bool, str]:
     return True, "ok"
 
 
-def create_add_tool_payload(model: str) -> Dict[str, Any]:
+def create_add_tool_payload(model: str) -> dict[str, Any]:
     """Create a standard tool call probe payload for the 'add' function.
     
     Args:
