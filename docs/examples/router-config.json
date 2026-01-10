@@ -1,0 +1,24 @@
+{
+  "LOG": true,
+  "LOG_LEVEL": "info",
+  "API_TIMEOUT_MS": 600000,
+  "Providers": [
+    {
+      "name": "ollama",
+      "api_base_url": "http://127.0.0.1:11434/v1/chat/completions",
+      "api_key": "ollama",
+      "models": ["llama3.1:latest", "mistral:latest", "qwen2.5:7b-instruct"]
+    },
+    {
+      "name": "anthropic",
+      "api_base_url": "https://api.anthropic.com/v1/messages",
+      "api_key": "$ANTHROPIC_API_KEY",
+      "models": ["claude-3-5-sonnet-20241022"],
+      "transformer": { "use": ["anthropic"] }
+    }
+  ],
+  "Router": {
+    "default": "ollama,qwen2.5:7b-instruct",
+    "think": "anthropic,claude-3-5-sonnet-20241022"
+  }
+}

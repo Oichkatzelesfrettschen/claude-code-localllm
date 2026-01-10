@@ -1,0 +1,33 @@
+{
+  "latency_prompt": "Say hello in one sentence.",
+  "iterations": 3,
+  "timeout_sec": 60,
+  "runtimes": [
+    {
+      "name": "ollama",
+      "url": "http://127.0.0.1:11434/v1/chat/completions",
+      "models": [
+        "llama3.1:latest",
+        "mistral:latest",
+        "qwen2.5:7b-instruct"
+      ]
+    },
+    {
+      "name": "vllm",
+      "url": "http://127.0.0.1:8000/v1/chat/completions",
+      "models": [
+        "Qwen/Qwen2.5-1.5B-Instruct",
+        "Qwen/Qwen2.5-7B-Instruct"
+      ],
+      "enabled": false
+    },
+    {
+      "name": "llamacpp",
+      "url": "http://127.0.0.1:8081/v1/chat/completions",
+      "models": [
+        "local-gguf"
+      ],
+      "enabled": false
+    }
+  ]
+}

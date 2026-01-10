@@ -1,0 +1,31 @@
+{
+  "denylist_paths": [
+    ".env",
+    ".env.*",
+    "**/secrets/**",
+    "**/credentials/**",
+    "**/.git/**",
+    "**/.ssh/**",
+    "**/.gnupg/**",
+    "**/.aws/**",
+    "**/.kube/**",
+    "**/.config/gh/**",
+    "**/.config/gcloud/**",
+    "**/.docker/config.json",
+    "**/.netrc",
+    "**/.npmrc",
+    "**/.pypirc",
+    "**/id_rsa",
+    "**/id_ed25519",
+    "**/*.pem",
+    "**/*.key"
+  ],
+  "sensitive_paths": [
+    "**/auth/**",
+    "**/security/**",
+    "**/infra/**"
+  ],
+  "long_context_threshold_tokens": 60000,
+  "min_free_vram_mib": 0,
+  "min_free_vram_ratio": 0.0
+}
