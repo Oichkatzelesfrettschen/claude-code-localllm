@@ -37,7 +37,12 @@ docker rm -f "${CONTAINER_NAME}" >/dev/null 2>&1 || true
 
 rm_flag=()
 if [[ "${RM_ON_EXIT}" == "1" ]]; then
-  rm_flag+=(--rm)
+  rm_flag=(--rm)
+fi
+
+tool_choice_args=()
+if [[ "${ENABLE_AUTO_TOOL_CHOICE}" == "1" ]]; then
+  tool_choice_args=(--enable-auto-tool-choice --tool-call-parser "${TOOL_CALL_PARSER}")
 fi
 
 exec docker run \
@@ -47,7 +52,7 @@ exec docker run \
   -p "127.0.0.1:${PORT}:8000" \
   -v "${HF_CACHE_DIR}:/root/.cache/huggingface" \
   -e HF_HOME=/root/.cache/huggingface \
-  vllm/vllm-openai:latest \
+  vllm/vllm-openai:v0.6.6 \
   "${MODEL_ID}" \
   --served-model-name "${MODEL_ID}" \
   --host 0.0.0.0 \
@@ -55,4 +60,4 @@ exec docker run \
   --dtype auto \
   --max-model-len "${MAX_MODEL_LEN}" \
   --gpu-memory-utilization "${GPU_MEM_UTIL}" \
-  $( [[ "${ENABLE_AUTO_TOOL_CHOICE}" == "1" ]] && printf '%s' "--enable-auto-tool-choice --tool-call-parser ${TOOL_CALL_PARSER}" )
+  "${tool_choice_args[@]}"
