@@ -1,0 +1,17 @@
+{
+  "denylist_paths": [
+    ".env",
+    ".env.*",
+    "**/secrets/**",
+    "**/credentials/**",
+    "**/.git/**",
+    "**/.ssh/**",
+    "**/.gnupg/**"
+  ],
+  "sensitive_paths": [
+    "**/auth/**",
+    "**/security/**",
+    "**/infra/**"
+  ],
+  "long_context_threshold_tokens": 60000
+}

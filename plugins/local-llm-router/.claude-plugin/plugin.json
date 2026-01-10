@@ -1,0 +1,8 @@
+{
+  "name": "local-llm-router",
+  "description": "Commands to inspect local LLM routing and model availability",
+  "version": "0.1.0",
+  "author": {
+    "name": "claude-code-localllm"
+  }
+}

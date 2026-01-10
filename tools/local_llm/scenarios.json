@@ -1,0 +1,27 @@
+{
+  "claude_pricing": {
+    "input_per_mtok": 3.0,
+    "output_per_mtok": 15.0
+  },
+  "local_cost_per_mtok": 0.2,
+  "scenarios": [
+    {
+      "name": "baseline",
+      "input_tokens": 1000000,
+      "output_tokens": 200000,
+      "local_share": 0.0
+    },
+    {
+      "name": "hybrid-40",
+      "input_tokens": 1000000,
+      "output_tokens": 200000,
+      "local_share": 0.4
+    },
+    {
+      "name": "hybrid-70",
+      "input_tokens": 1000000,
+      "output_tokens": 200000,
+      "local_share": 0.7
+    }
+  ]
+}
