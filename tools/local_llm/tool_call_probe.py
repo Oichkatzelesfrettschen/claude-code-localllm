@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import socket
 import urllib.error
 import urllib.request
 from typing import Any, Dict, Optional, Tuple
@@ -17,6 +18,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--tool-name", default="add", help="Tool name")
     parser.add_argument("--a", type=int, default=2, help="First operand")
     parser.add_argument("--b", type=int, default=3, help="Second operand")
+    parser.add_argument("--timeout-sec", type=int, default=60, help="Request timeout")
+    parser.add_argument("--json", action="store_true", help="Emit machine-readable JSON output")
     return parser.parse_args()
 
 
@@ -102,20 +105,47 @@ def main() -> int:
     )
 
     try:
-        with urllib.request.urlopen(request) as response:
+        with urllib.request.urlopen(request, timeout=args.timeout_sec) as response:
             data = json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace").strip()
         detail = body or "no error body"
-        print(f"Tool-call probe failed: HTTP {exc.code} ({detail})")
+        if args.json:
+            print(json.dumps({"ok": False, "error": f"HTTP {exc.code} ({detail})"}))
+        else:
+            print(f"Tool-call probe failed: HTTP {exc.code} ({detail})")
+        return 1
+    except urllib.error.URLError as exc:
+        if args.json:
+            print(json.dumps({"ok": False, "error": f"URL error ({exc})"}))
+        else:
+            print(f"Tool-call probe failed: URL error ({exc})")
+        return 1
+    except TimeoutError as exc:
+        if args.json:
+            print(json.dumps({"ok": False, "error": f"timeout ({exc})"}))
+        else:
+            print(f"Tool-call probe failed: timeout ({exc})")
+        return 1
+    except socket.timeout as exc:
+        if args.json:
+            print(json.dumps({"ok": False, "error": f"timeout ({exc})"}))
+        else:
+            print(f"Tool-call probe failed: timeout ({exc})")
         return 1
 
     message = data.get("choices", [{}])[0].get("message", {})
     ok, reason = validate_tool_call(message, args.tool_name, args.a, args.b)
     if ok:
-        print("Tool-call compliant")
+        if args.json:
+            print(json.dumps({"ok": True}))
+        else:
+            print("Tool-call compliant")
         return 0
-    print(f"Tool-call invalid: {reason}")
+    if args.json:
+        print(json.dumps({"ok": False, "error": reason}))
+    else:
+        print(f"Tool-call invalid: {reason}")
     return 1
 
 

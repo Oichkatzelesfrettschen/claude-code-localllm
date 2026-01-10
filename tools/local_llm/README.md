@@ -62,8 +62,35 @@ python3 tools/local_llm/runtime_probe.py \
   --output /tmp/runtime_probe.json
 ```
 
+## vram_bench.py
+Run tool-call + latency probes while sampling VRAM before/after each model:
+```
+python3 tools/local_llm/vram_bench.py \
+  --url http://127.0.0.1:11434/v1/chat/completions \
+  --config tools/local_llm/probe_models_4gb.json \
+  --output /tmp/vram_bench.json
+```
+
 ## vram_probe.py
 Probe NVIDIA GPU VRAM pressure (useful for routing/policy inputs):
 ```
 python3 tools/local_llm/vram_probe.py
+```
+
+## validate_router_config.py
+Validate `claude-code-router` config slot/model references and basic safety:
+```
+python3 tools/local_llm/validate_router_config.py --path ~/.claude-code-router/config.json --require-env
+```
+
+## sanitize_json.py
+Redact likely-secret fields from JSON before sharing logs:
+```
+cat /tmp/runtime_probe.json | python3 tools/local_llm/sanitize_json.py
+```
+
+## vLLM (Docker)
+Start a vLLM OpenAI-compatible server on `127.0.0.1:8000`:
+```
+tools/local_llm/runtimes/vllm_docker.sh Qwen/Qwen2.5-1.5B-Instruct
 ```

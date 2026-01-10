@@ -7,6 +7,7 @@ persistent configuration, add the output to your shell profile.
 - `ANTHROPIC_BASE_URL` -> Router endpoint (Claude Code calls route here).
 - `ANTHROPIC_AUTH_TOKEN` -> Router API key (if configured).
 - `ANTHROPIC_API_KEY` -> Required for Anthropic provider routes (think/longContext).
+- `OPENROUTER_API_KEY` -> Required for OpenRouter provider routes (Gemini / OpenAI-style models).
 - `NO_PROXY` -> Avoid proxying local endpoints.
 
 ## Recommended Usage

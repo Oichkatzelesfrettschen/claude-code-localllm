@@ -46,9 +46,12 @@ This repository includes several Claude Code plugins that extend functionality w
 
 This fork adds documentation and tooling for experimenting with local-first routing (with escalation back to Claude) via an external router/proxy.
 
-- Docs and roadmap: `docs/local-llm-integration-roadmap.md`
+- Consolidated roadmap: `docs/local-llm-master-roadmap.md`
 - Quickstart: `docs/local-llm-setup.md`
+- OpenRouter (Gemini + coding models): `docs/openrouter-setup.md`
+- Model validation matrix (by VRAM tier/runtime): `docs/model-tier-matrix.md`
 - Probes and policy tooling: `tools/local_llm/` and `make tool-probe`
+- Optional runtimes: `docs/vllm-setup.md`, `docs/llamacpp-setup.md`
 
 ## Reporting Bugs
 

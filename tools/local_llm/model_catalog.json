@@ -1,0 +1,46 @@
+{
+  "tiers": [
+    {
+      "tier": "2gb",
+      "vram_max_gib": 2,
+      "notes": "Target: iGPU / very low VRAM. Prefer small instruct models; tool-calling compliance must be tested."
+    },
+    {
+      "tier": "4gb",
+      "vram_max_gib": 4,
+      "notes": "Target: older GPUs / laptop dGPUs. Tool calling may be weaker; validate strictly."
+    },
+    {
+      "tier": "8gb",
+      "vram_max_gib": 8,
+      "notes": "Target: midrange GPUs. Candidate for small-to-mid models; test latency and tool-call stability."
+    },
+    {
+      "tier": "12gb",
+      "vram_max_gib": 12,
+      "notes": "Target: RTX 4070 Ti class. Comfortable for 7B-ish models; still watch fragmentation/low-vram mode."
+    }
+  ],
+  "ollama_candidates": {
+    "2gb": [
+      "qwen2.5:0.5b-instruct",
+      "qwen2.5:1.5b-instruct",
+      "llama3.2:1b"
+    ],
+    "4gb": [
+      "llama3.2:3b",
+      "qwen2.5:3b-instruct",
+      "qwen2.5:1.5b-instruct"
+    ],
+    "8gb": [
+      "qwen2.5:7b-instruct",
+      "mistral:latest",
+      "llama3.1:latest"
+    ],
+    "12gb": [
+      "qwen2.5:7b-instruct",
+      "llama3.1:latest",
+      "mistral:latest"
+    ]
+  }
+}

@@ -16,7 +16,16 @@
       "name": "vllm",
       "url": "http://127.0.0.1:8000/v1/chat/completions",
       "models": [
+        "Qwen/Qwen2.5-1.5B-Instruct",
         "Qwen/Qwen2.5-7B-Instruct"
+      ],
+      "enabled": false
+    },
+    {
+      "name": "llamacpp",
+      "url": "http://127.0.0.1:8081/v1/chat/completions",
+      "models": [
+        "local-gguf"
       ],
       "enabled": false
     }

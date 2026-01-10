@@ -1,0 +1,4 @@
+{
+  "models": ["qwen2.5:7b-instruct", "mistral:latest", "llama3.1:latest"]
+}
+

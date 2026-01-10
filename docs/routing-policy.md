@@ -9,6 +9,8 @@ auditable. All paths and patterns are case-sensitive unless noted.
 - Escalate on uncertainty or tool-call instability.
 - Preserve tool-permission rules and audit trails.
 
+Task classes are defined in `docs/task-classification.md`.
+
 ## Tier Rules (Default)
 | Tier | Allowed Data | Default Route | Escalation |
 | --- | --- | --- | --- |
@@ -35,6 +37,9 @@ Always route to Claude if any file path matches:
 - Model reports low confidence or violates system prompt.
 - Low free VRAM or runtime instability on the local GPU.
 - Any policy violation or missing dependency.
+
+Use `make vram-probe` and `make vram-bench` to make VRAM pressure observable
+and treat regressions as blocking.
 
 ## Example Policy Evaluation
 ```

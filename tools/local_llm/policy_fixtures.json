@@ -1,0 +1,36 @@
+{
+  "rules": "tools/local_llm/policy_rules.json",
+  "cases": [
+    {
+      "name": "safe_readme_default",
+      "paths": ["README.md"],
+      "tokens": 0,
+      "expected": { "route": "local", "reason": "default_safe" }
+    },
+    {
+      "name": "denylist_env",
+      "paths": [".env"],
+      "tokens": 0,
+      "expected": { "route": "claude_only", "reason": "denylist_path" }
+    },
+    {
+      "name": "denylist_user_ssh",
+      "paths": ["/home/user/.ssh/id_ed25519"],
+      "tokens": 0,
+      "expected": { "route": "claude_only", "reason": "denylist_path" }
+    },
+    {
+      "name": "sensitive_auth_path",
+      "paths": ["src/auth/middleware.ts"],
+      "tokens": 0,
+      "expected": { "route": "claude_first", "reason": "sensitive_path" }
+    },
+    {
+      "name": "long_context",
+      "paths": ["README.md"],
+      "tokens": 60001,
+      "expected": { "route": "claude_first", "reason": "long_context" }
+    }
+  ]
+}
+

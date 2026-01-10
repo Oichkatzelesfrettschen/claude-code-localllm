@@ -11,6 +11,7 @@ Detected on this machine (CachyOS / Arch):
 - Found (GPU/local-LLM): `nvidia-smi`, `nvcc`, `ollama`
 - Installed (AUR/system): `devcontainer-cli` (`@devcontainers/cli`), `powershell-bin` (`pwsh`)
 - Notes: `lttng-ust` is installed; `lttng-ust2.12` is optional and conflicts with `lttng-ust` on this system.
+- Notes: GPU access inside containers is configured (`docker run --gpus all ... nvidia-smi` works on this machine).
 
 ## Module Requirements
 
@@ -58,6 +59,22 @@ Files: `Script/run_devcontainer_claude_code.ps1`
 Files: `examples/hooks/bash_command_validator_example.py`
 - Required: `python3`
 
+### Local LLM Utilities
+Files: `tools/local_llm/*`
+- Required: `python3`
+- Optional (for some workflows): `jq`
+
+### vLLM (Docker helper)
+Files: `tools/local_llm/runtimes/vllm_docker.sh`
+- Required: `docker`
+- Required: GPU in containers (`docker run --gpus all ...` must work)
+- Notes: Model downloads require network access and may require `HF_TOKEN`.
+
+### llama.cpp (server helper)
+Files: `tools/local_llm/runtimes/llamacpp_server.sh`
+- Required: `llama-server` in PATH (from a `llama.cpp` build or package)
+- Required: a GGUF model file on disk
+
 ### Plugin Development Tooling (Docs and Examples)
 Files: `plugins/plugin-dev/**`
 - Required for running helper scripts: `bash`, `jq`
@@ -77,8 +94,9 @@ prefer `pacman` or `yay`. I will not install anything without explicit targets.
 - `powershell-bin` was installed from `chaotic-aur` after importing and signing
   the Garuda builder key.
 - Optional for PowerShell tracing: `lttng-ust2.12` (conflicts with `lttng-ust` on this system).
-- vLLM packages are not installed yet; selection pending (`python-vllm-bin` vs `python-vllm` vs `python-vllm-cuda`).
-  - `python-vllm-cuda` currently fails to resolve dependencies (`cuda-tools`, `gcc13-libs`) in AUR.
+- Native vLLM packages are not installed; the validated path is Docker-based (see `docs/vllm-setup.md`).
+  - If you choose AUR, selection remains pending (`python-vllm-bin` vs `python-vllm` vs `python-vllm-cuda`).
+  - Note: `python-vllm-cuda` previously failed to resolve dependencies (`cuda-tools`, `gcc13-libs`) in AUR on this machine.
 
 ### Devcontainer CLI Alternatives (AUR)
 - `devcontainer-cli` (installed)
@@ -97,10 +115,20 @@ verification (see `tools/supply_chain/verify_npm_integrity.py`).
 - Config path: `~/.claude-code-router/config.json`
 
 ## Alternate Runtimes (Planned)
-- vLLM for OpenAI-compatible serving on GPU.
-  - Candidate packages: `python-vllm-bin`, `python-vllm`, `python-vllm-cuda`.
-  - Hybrid runtime: `vllama` (vLLM + Ollama management).
-  - Install and document the chosen package before enabling vLLM probes.
+### vLLM (GPU, OpenAI-compatible)
+- Validated deployment path: Docker image `vllm/vllm-openai:latest` via `tools/local_llm/runtimes/vllm_docker.sh` (see `docs/vllm-setup.md`).
+- Requires: `docker` + NVIDIA Container Toolkit (`docker run --gpus all ...` must work).
+- Tool calling requires vLLM server flags (`--enable-auto-tool-choice` + `--tool-call-parser ...`).
+- Operational constraint: running vLLM and GPU-accelerated Ollama at the same time can exhaust VRAM and crash Ollama (`cudaMalloc failed: out of memory`).
+
+### Native vLLM packages (optional, unvalidated)
+- Candidate packages: `python-vllm-bin`, `python-vllm`, `python-vllm-cuda`.
+- Note: AUR resolution may change; document exact package/version choice before relying on it.
+
+### llama.cpp (optional, unvalidated)
+- Use when you need GGUF quantization and extremely small VRAM footprints.
+- Requires `llama-server` (from a `llama.cpp` build or package) and a GGUF model file.
+- See `docs/llamacpp-setup.md`.
 
 ## Build/Validation Harness
 - `make` and `curl` are required to run the `Makefile` targets.

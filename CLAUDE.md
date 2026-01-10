@@ -14,10 +14,11 @@ This repository tracks experiments and tooling to run Claude Code with a local-L
 
 ## Validation Commands
 - Supply chain: `make verify-devcontainer`
+- Router config examples: `make router-config-validate`
 - Policy engine: `make policy-check`
 - Local model tool calling (requires `ollama serve`): `make tool-probe` and `make probe-suite`
 - Latency baseline (requires `ollama serve`): `make latency-probe`
+- VRAM deltas around probes (NVIDIA): `make vram-bench VRAM_BENCH_CONFIG=tools/local_llm/probe_models_4gb.json`
 
 ## Local LLM Quickstart
 See `docs/local-llm-setup.md` and `docs/operator-runbook.md`.
-

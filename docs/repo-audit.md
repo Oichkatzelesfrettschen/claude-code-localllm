@@ -65,7 +65,7 @@ Based on a full recursive listing:
 - `Makefile` targets exist for probes and verification, but they are not wired into CI.
 - `devcontainer` CLI was missing on this machine (now installed via AUR).
 - `pwsh` was missing (now installed from `powershell-bin`).
-- No `gemini.md` exists yet; add only after validating a Gemini proxy/routing path with primary sources.
+- `gemini.md` exists and points at `claude-code-router` + OpenRouter examples; direct Gemini/Vertex paths should still be validated before relying on them for tool-using workloads.
 - AUR `devcontainer-cli` emits a "Skipping verification of source file PGP
   signatures" warning. This is a supply-chain risk and must be documented.
 - npm tarball integrity for `@devcontainers/cli@0.80.3` was verified against the

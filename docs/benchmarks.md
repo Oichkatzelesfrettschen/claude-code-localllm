@@ -18,6 +18,12 @@ Probe tool-call compliance (requires `ollama serve`):
 make tool-probe
 ```
 
+## Router Config Validation
+Validate the example router configs in `docs/examples/`:
+```
+make router-config-validate
+```
+
 ## Policy Check
 Run the routing policy engine with sample paths:
 ```
@@ -57,4 +63,10 @@ make latency-probe
 Capture a snapshot of GPU VRAM pressure (useful for routing decisions):
 ```
 make vram-probe
+```
+
+## VRAM Bench (models)
+Run tool-call + latency probes while sampling VRAM before/after each model:
+```
+make vram-bench VRAM_BENCH_CONFIG=tools/local_llm/probe_models_4gb.json
 ```

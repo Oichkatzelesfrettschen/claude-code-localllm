@@ -1,9 +1,35 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "required": ["router", "policy"],
+  "required": ["Providers", "Router"],
   "properties": {
-    "router": {
+    "LOG": { "type": "boolean" },
+    "LOG_LEVEL": {
+      "type": "string",
+      "enum": ["fatal", "error", "warn", "info", "debug", "trace"]
+    },
+    "API_TIMEOUT_MS": { "type": "integer", "minimum": 0 },
+    "PROXY_URL": { "type": "string" },
+    "APIKEY": { "type": "string" },
+    "HOST": { "type": "string" },
+    "NON_INTERACTIVE_MODE": { "type": "boolean" },
+    "Providers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "api_base_url", "api_key", "models"],
+        "properties": {
+          "name": { "type": "string" },
+          "api_base_url": { "type": "string" },
+          "api_key": { "type": "string" },
+          "models": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "transformer": { "type": "object" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "Router": {
       "type": "object",
       "required": ["default"],
       "properties": {
@@ -13,17 +39,8 @@
         "longContext": { "type": "string" },
         "longContextThreshold": { "type": "integer", "minimum": 0 }
       },
-      "additionalProperties": false
-    },
-    "policy": {
-      "type": "object",
-      "required": ["denylist_paths", "sensitive_paths"],
-      "properties": {
-        "denylist_paths": { "type": "array", "items": { "type": "string" } },
-        "sensitive_paths": { "type": "array", "items": { "type": "string" } }
-      },
-      "additionalProperties": false
+      "additionalProperties": true
     }
   },
-  "additionalProperties": false
+  "additionalProperties": true
 }

@@ -2,6 +2,33 @@
 
 All probe runs set `temperature: 0` to reduce tool-selection randomness.
 
+For a concise, reproducible summary by VRAM tier and runtime, see
+`docs/model-tier-matrix.md`.
+
+## VRAM-tier probe suites (Ollama)
+
+These results come from `tools/local_llm/probe_suite.py` against Ollama’s
+OpenAI-compatible endpoint (`/v1/chat/completions`) with strict `tool_calls`
+validation.
+
+Re-run:
+- `python3 tools/local_llm/probe_suite.py --url http://127.0.0.1:11434/v1/chat/completions --config tools/local_llm/probe_models_2gb.json`
+- `python3 tools/local_llm/probe_suite.py --url http://127.0.0.1:11434/v1/chat/completions --config tools/local_llm/probe_models_4gb.json`
+
+### 2GB tier (validated)
+- PASS: `qwen2.5:0.5b-instruct`, `qwen2.5:1.5b-instruct`, `llama3.2:1b`
+
+### 4GB tier (validated)
+- PASS: `llama3.2:3b`, `qwen2.5:3b-instruct`, `qwen2.5:1.5b-instruct`
+- FAIL (tools unsupported by runtime): `gemma2:2b`
+
+### 8GB / 12GB tiers
+### 8GB tier (validated)
+- PASS: `qwen2.5:7b-instruct`, `mistral:latest`, `llama3.1:latest`
+
+### 12GB tier (validated)
+- PASS: `qwen2.5:7b-instruct`, `llama3.1:latest`, `mistral:latest`
+
 ## qwen2.5:7b-instruct (Ollama)
 **Test:** OpenAI-style tool call via `/v1/chat/completions` with `tools[]`.
 

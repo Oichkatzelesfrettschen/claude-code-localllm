@@ -7,11 +7,13 @@ making routing decisions *aware of runtime health and VRAM pressure*.
 
 1) **Runtime(s)**
 - **Ollama (CUDA)**: baseline local runtime with OpenAI-compatible endpoint used by probes.
-- **vLLM (CUDA)**: optional secondary runtime for higher throughput / OpenAI compatibility (planned).
+- **vLLM (CUDA)**: optional secondary runtime for higher throughput / OpenAI compatibility (Docker-based; see `docs/vllm-setup.md`).
+- **llama.cpp**: optional OpenAI-compatible server for GGUF quantized models (see `docs/llamacpp-setup.md`).
 
 2) **Telemetry**
 - **VRAM probe**: a lightweight local utility that samples GPU memory pressure (`nvidia-smi`).
 - **Runtime probe**: existing `tools/local_llm/runtime_probe.py` for tool-call + latency checks.
+- **VRAM bench**: `tools/local_llm/vram_bench.py` to capture VRAM deltas around probes.
 
 3) **Policy**
 - **Path safety**: denylist/sensitive paths route to Claude.
@@ -32,4 +34,4 @@ Decision:
 - Add a model capability registry (expected VRAM footprint per model).
 - Prefer smaller local model under pressure rather than immediate escalation.
 - Record VRAM deltas during probes to detect fragmentation/caching regressions.
-
+- Document and enforce “one GPU runtime at a time” unless VRAM is explicitly budgeted.

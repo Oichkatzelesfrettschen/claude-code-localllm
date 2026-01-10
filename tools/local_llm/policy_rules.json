@@ -6,7 +6,19 @@
     "**/credentials/**",
     "**/.git/**",
     "**/.ssh/**",
-    "**/.gnupg/**"
+    "**/.gnupg/**",
+    "**/.aws/**",
+    "**/.kube/**",
+    "**/.config/gh/**",
+    "**/.config/gcloud/**",
+    "**/.docker/config.json",
+    "**/.netrc",
+    "**/.npmrc",
+    "**/.pypirc",
+    "**/id_rsa",
+    "**/id_ed25519",
+    "**/*.pem",
+    "**/*.key"
   ],
   "sensitive_paths": [
     "**/auth/**",

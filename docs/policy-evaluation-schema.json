@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Local LLM Routing Policy Evaluation",
+  "type": "object",
+  "required": ["input", "decision"],
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["paths", "token_count"],
+      "properties": {
+        "paths": { "type": "array", "items": { "type": "string" } },
+        "token_count": { "type": "integer", "minimum": 0 },
+        "vram_free_mib": { "type": ["integer", "null"], "minimum": 0 },
+        "vram_free_ratio": { "type": ["number", "null"], "minimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "decision": {
+      "type": "object",
+      "required": ["route", "reason"],
+      "properties": {
+        "route": { "type": "string", "enum": ["local", "claude_first", "claude_only"] },
+        "reason": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
+

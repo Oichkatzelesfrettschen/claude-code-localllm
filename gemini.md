@@ -34,3 +34,9 @@ Use the router’s `vertex-gemini` transformer when you want Vertex-based auth.
 - Prefer routing `think` / `longContext` to Claude unless Gemini behavior is
   validated for your tool-use workload.
 
+## Local config example
+See `docs/examples/router-config-openrouter.json`.
+
+## Validation
+- Validate router config examples: `make router-config-validate`
+- Validate local tool calling (Ollama): `make tool-probe` and `make probe-suite`

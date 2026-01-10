@@ -4,8 +4,9 @@ OLLAMA_MODEL ?= llama3.1:latest
 NPM_PACKAGE ?= @devcontainers/cli
 NPM_VERSION ?= 0.80.3
 NPM_TARBALL ?= /tmp/devcontainer-cli-0.80.3.tgz
+VRAM_BENCH_CONFIG ?= tools/local_llm/probe_models.json
 
-.PHONY: verify-devcontainer cost-model tool-probe policy-check probe-suite probe-suite-candidates latency-probe runtime-probe vram-probe
+.PHONY: verify-devcontainer cost-model tool-probe policy-check policy-regression probe-suite probe-suite-candidates latency-probe runtime-probe vram-probe vram-bench router-config-validate
 
 verify-devcontainer:
 	curl -L -o "$(NPM_TARBALL)" "https://registry.npmjs.org/$(NPM_PACKAGE)/-/cli-$(NPM_VERSION).tgz"
@@ -26,6 +27,9 @@ policy-check:
 	$(PYTHON) tools/local_llm/policy_engine.py \
 		--rules tools/local_llm/policy_rules.json \
 		--paths README.md
+
+policy-regression:
+	$(PYTHON) tools/local_llm/policy_regression.py --fixtures tools/local_llm/policy_fixtures.json
 
 probe-suite:
 	$(PYTHON) tools/local_llm/probe_suite.py \
@@ -48,3 +52,10 @@ runtime-probe:
 
 vram-probe:
 	$(PYTHON) tools/local_llm/vram_probe.py
+
+vram-bench:
+	$(PYTHON) tools/local_llm/vram_bench.py --url "$(OLLAMA_URL)" --config "$(VRAM_BENCH_CONFIG)"
+
+router-config-validate:
+	$(PYTHON) tools/local_llm/validate_router_config.py --path docs/examples/router-config.json
+	$(PYTHON) tools/local_llm/validate_router_config.py --path docs/examples/router-config-openrouter.json
