@@ -10,7 +10,7 @@ runtime reproducible.
 - `docker`
 - NVIDIA Container Toolkit (so `docker run --gpus all ...` works)
 - Network access to pull:
-  - `vllm/vllm-openai:latest`
+  - `vllm/vllm-openai` (pinned to specific digest for supply-chain security)
   - Model weights from Hugging Face Hub (some models require `HF_TOKEN`)
 
 ## Start vLLM
@@ -57,4 +57,49 @@ budget VRAM for both.
 ```
 tools/local_llm/runtimes/vllm_docker_stop.sh
 ```
+
+## Docker Image Security
+
+The `vllm_docker.sh` script pins the Docker image to an immutable digest to prevent
+supply-chain attacks where a compromised `latest` tag could introduce malicious code.
+
+Current pinned digest (as of script version):
+```
+vllm/vllm-openai@sha256:6a43a2dfb6fb4681fe1732d7cd1a0834590b44b7d2bc483886883655468a4591
+```
+
+### Updating the Pinned Image
+
+To update to a newer vLLM release:
+
+1. Pull the latest tag and inspect the digest:
+   ```bash
+   docker pull vllm/vllm-openai:latest
+   docker inspect vllm/vllm-openai:latest | jq -r '.[0].RepoDigests[0]'
+   ```
+
+2. Validate the image works with your models:
+   ```bash
+   # Test with a small model first
+   docker run --rm --gpus all \
+     -p 127.0.0.1:8000:8000 \
+     vllm/vllm-openai@sha256:NEW_DIGEST_HERE \
+     Qwen/Qwen2.5-1.5B-Instruct \
+     --max-model-len 2048
+   
+   # Run tool-call probe
+   python3 tools/local_llm/tool_call_probe.py \
+     --url http://127.0.0.1:8000/v1/chat/completions \
+     --model Qwen/Qwen2.5-1.5B-Instruct
+   ```
+
+3. Update the digest in `tools/local_llm/runtimes/vllm_docker.sh`.
+
+4. Re-run the full probe suite to validate:
+   ```bash
+   make probe-suite  # or specific vLLM probe config
+   ```
+
+This process ensures you consciously review and validate each image update rather than
+automatically trusting upstream changes.
 
