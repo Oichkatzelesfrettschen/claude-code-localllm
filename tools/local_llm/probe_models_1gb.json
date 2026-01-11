@@ -1,0 +1,6 @@
+{
+  "models": ["qwen2.5:0.5b-instruct"],
+  "tier": "1gb",
+  "vram_max_gib": 1,
+  "notes": "Extreme low VRAM (iGPU, GT 710/720/750 1GB). Q4 quantization required for most models."
+}

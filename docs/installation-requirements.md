@@ -132,5 +132,41 @@ verification (see `tools/supply_chain/verify_npm_integrity.py`).
 - Requires `llama-server` (from a `llama.cpp` build or package) and a GGUF model file.
 - See `docs/llamacpp-setup.md`.
 
+## Static Analysis Tools
+
+The following tools are used for code quality and linting:
+
+| Tool | Purpose | Install (Arch/CachyOS) |
+|------|---------|------------------------|
+| ruff | Python linting + formatting | `pip install ruff` or `yay -S python-ruff` |
+| shellcheck | Shell script static analysis | `pacman -S shellcheck` |
+| mypy | Python type checking | `pip install mypy` or `yay -S mypy` |
+| pytest | Python unit testing | `pacman -S python-pytest` |
+| pre-commit | Git hook manager | `pacman -S python-pre-commit` |
+
+### Makefile Targets
+
+- `make lint` - Run all linters (ruff, shellcheck, json-lint)
+- `make lint-python` - Run ruff on Python files
+- `make lint-shell` - Run shellcheck on shell scripts
+- `make typecheck` - Run mypy type checking
+- `make test` - Run pytest unit tests
+- `make pre-commit-install` - Install pre-commit hooks
+- `make pre-commit-run` - Run all pre-commit hooks
+
+### Pre-commit Hooks
+
+Install hooks with `make pre-commit-install` or `pre-commit install`.
+
+The `.pre-commit-config.yaml` includes:
+- Trailing whitespace removal
+- End-of-file fixer
+- YAML/JSON validation
+- Large file detection
+- Ruff linting and formatting
+- Shellcheck
+- JSON lint for local-llm configs
+- Python compile check
+
 ## Build/Validation Harness
 - `make` and `curl` are required to run the `Makefile` targets.

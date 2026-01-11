@@ -1,0 +1,6 @@
+{
+  "models": ["qwen2.5:7b-instruct", "llama3.1:latest"],
+  "tier": "10gb",
+  "vram_max_gib": 10,
+  "notes": "RTX 3080 10GB. Fits 7B models with room for context."
+}
