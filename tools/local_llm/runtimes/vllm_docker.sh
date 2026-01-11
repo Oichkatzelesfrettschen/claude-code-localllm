@@ -33,6 +33,14 @@ TOOL_CALL_PARSER="${TOOL_CALL_PARSER:-hermes}"
 
 mkdir -p "${HF_CACHE_DIR}"
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+IMAGE_REF_FILE="${IMAGE_REF_FILE:-${SCRIPT_DIR}/vllm_image.txt}"
+IMAGE_REF="$(cat "${IMAGE_REF_FILE}" 2>/dev/null || true)"
+if [[ -z "${IMAGE_REF}" ]]; then
+  echo "ERROR: missing vLLM image reference; expected ${IMAGE_REF_FILE}" >&2
+  exit 1
+fi
+
 docker rm -f "${CONTAINER_NAME}" >/dev/null 2>&1 || true
 
 rm_flag=()
@@ -52,7 +60,7 @@ exec docker run \
   -p "127.0.0.1:${PORT}:8000" \
   -v "${HF_CACHE_DIR}:/root/.cache/huggingface" \
   -e HF_HOME=/root/.cache/huggingface \
-  vllm/vllm-openai@sha256:d623253f2ba246378421c9642e20885e65257f38418ff26d48c81aea1702521b \
+  "${IMAGE_REF}" \
   "${MODEL_ID}" \
   --served-model-name "${MODEL_ID}" \
   --host 0.0.0.0 \

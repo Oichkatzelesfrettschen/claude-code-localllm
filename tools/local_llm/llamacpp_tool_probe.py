@@ -9,8 +9,9 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
+import runpy
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -40,9 +41,22 @@ def models_url_from_chat_url(chat_url: str) -> str:
     return urllib.parse.urlunparse(parsed._replace(path=path, query="", fragment=""))
 
 
-def fetch_first_model_id(url: str) -> Optional[str]:
-    with urllib.request.urlopen(url, timeout=30) as response:
-        payload = json.loads(response.read().decode("utf-8"))
+def fetch_first_model_id(url: str, timeout_sec: float) -> Optional[str]:
+    try:
+        with urllib.request.urlopen(url, timeout=timeout_sec) as response:
+            raw = response.read()
+    except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
+        print(f"ERROR: failed to fetch models from {url}: {exc}", file=sys.stderr)
+        return None
+    except Exception as exc:
+        print(f"ERROR: unexpected error fetching models from {url}: {exc}", file=sys.stderr)
+        return None
+
+    try:
+        payload = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        print(f"ERROR: invalid JSON from models endpoint {url}: {exc}", file=sys.stderr)
+        return None
     data = payload.get("data", [])
     if not isinstance(data, list) or not data:
         return None
@@ -55,15 +69,14 @@ def fetch_first_model_id(url: str) -> Optional[str]:
 def main() -> int:
     args = parse_args()
     models_url = models_url_from_chat_url(args.url)
-    model_id = fetch_first_model_id(models_url)
+    model_id = fetch_first_model_id(models_url, timeout_sec=float(args.timeout_sec))
     if not model_id:
-        print(f"ERROR: no model id found at {models_url}")
+        print(f"ERROR: no model id found at {models_url}", file=sys.stderr)
         return 1
 
     repo_root = Path(__file__).resolve().parents[2]
     probe = repo_root / "tools/local_llm/tool_call_probe.py"
-    cmd = [
-        sys.executable,
+    argv = [
         str(probe),
         "--url",
         args.url,
@@ -78,10 +91,22 @@ def main() -> int:
         "--timeout-sec",
         str(args.timeout_sec),
     ]
-    completed = subprocess.run(cmd, check=False, cwd=str(repo_root))
-    return completed.returncode
+
+    prior_argv = sys.argv
+    try:
+        sys.argv = argv
+        runpy.run_path(str(probe), run_name="__main__")
+        return 0
+    except SystemExit as exc:
+        code = exc.code
+        if code is None:
+            return 0
+        if isinstance(code, int):
+            return code
+        return 1
+    finally:
+        sys.argv = prior_argv
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -72,7 +72,7 @@ supply-chain attacks where a compromised `latest` tag could introduce malicious 
 
 Current pinned digest (as of script version):
 ```
-vllm/vllm-openai@sha256:d623253f2ba246378421c9642e20885e65257f38418ff26d48c81aea1702521b
+cat tools/local_llm/runtimes/vllm_image.txt
 ```
 
 ### Updating the Pinned Image
@@ -101,6 +101,7 @@ To update to a newer vLLM release:
    ```
 
 3. Update the digest in `tools/local_llm/runtimes/vllm_docker.sh`.
+   - This repo uses `tools/local_llm/runtimes/vllm_image.txt` as the single source of truth.
 
 4. Re-run the full probe suite to validate:
    ```bash
