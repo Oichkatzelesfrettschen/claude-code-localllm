@@ -27,7 +27,17 @@ PORT="${PORT:-8081}"
 CTX="${CTX:-4096}"
 GPU_LAYERS="${GPU_LAYERS:-0}"
 
-exec llama-server \
+LLAMA_SERVER_BIN="$(command -v llama-server || true)"
+if [[ -z "${LLAMA_SERVER_BIN}" && -x "/opt/llama-cpp/bin/llama-server" ]]; then
+  LLAMA_SERVER_BIN="/opt/llama-cpp/bin/llama-server"
+fi
+if [[ -z "${LLAMA_SERVER_BIN}" ]]; then
+  echo "ERROR: llama-server not found in PATH." >&2
+  echo "Hint (Arch/chaotic-aur): export PATH=/opt/llama-cpp/bin:\\$PATH" >&2
+  exit 1
+fi
+
+exec "${LLAMA_SERVER_BIN}" \
   --host "${HOST}" \
   --port "${PORT}" \
   --model "${MODEL_PATH}" \
@@ -35,4 +45,3 @@ exec llama-server \
   --n-gpu-layers "${GPU_LAYERS}" \
   --chat-template chatml \
   --metrics
-

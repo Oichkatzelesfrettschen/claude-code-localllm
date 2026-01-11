@@ -8,7 +8,7 @@ NPM_VERSION ?= 0.80.3
 NPM_TARBALL ?= /tmp/devcontainer-cli-0.80.3.tgz
 VRAM_BENCH_CONFIG ?= tools/local_llm/probe_models.json
 
-.PHONY: verify-devcontainer cost-model json-lint gpu-runtime-guard ollama-preflight llamacpp-preflight tool-probe llamacpp-tool-probe policy-check policy-regression probe-suite probe-suite-candidates latency-probe runtime-probe runtime-probe-vllm vram-probe vram-bench router-config-validate failure-injection
+.PHONY: verify-devcontainer cost-model json-lint openrouter-model-check gpu-runtime-guard ollama-preflight llamacpp-preflight tool-probe llamacpp-tool-probe policy-check policy-regression probe-suite probe-suite-candidates latency-probe runtime-probe runtime-probe-vllm vram-probe vram-bench router-config-validate failure-injection
 
 verify-devcontainer:
 	curl -L -o "$(NPM_TARBALL)" "https://registry.npmjs.org/$(NPM_PACKAGE)/-/cli-$(NPM_VERSION).tgz"
@@ -22,6 +22,9 @@ cost-model:
 
 json-lint:
 	$(PYTHON) tools/local_llm/json_lint.py
+
+openrouter-model-check:
+	$(PYTHON) tools/local_llm/openrouter_model_check.py --config docs/examples/router-config-openrouter.json
 
 gpu-runtime-guard:
 	$(PYTHON) tools/local_llm/gpu_runtime_guard.py
@@ -40,9 +43,7 @@ tool-probe:
 
 llamacpp-tool-probe:
 	@$(MAKE) llamacpp-preflight
-	$(PYTHON) tools/local_llm/tool_call_probe.py \
-		--url "$(LLAMACPP_URL)" \
-		--model "$(LLAMACPP_MODEL)"
+	$(PYTHON) tools/local_llm/llamacpp_tool_probe.py --url "$(LLAMACPP_URL)"
 
 policy-check:
 	$(PYTHON) tools/local_llm/policy_engine.py \

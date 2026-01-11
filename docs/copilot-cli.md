@@ -6,6 +6,10 @@ This machine has both:
 
 These are optional helpers and are **not** wired into Claude Code routing.
 
+## Repo-local Claude command
+This repo includes a helper command for invoking `gh copilot` from Claude Code:
+- `.claude/commands/copilot-suggest.md`
+
 ## Quick checks
 - `gh copilot --help`
 - `copilot --help`

@@ -22,6 +22,7 @@ Use `docs/examples/router-config-openrouter.json` as a starting point for:
 3) Activate env vars: `eval "$(ccr activate)"`
 4) Validate:
    - `make router-config-validate` (validates repo example configs)
+   - `make openrouter-model-check` (validates OpenRouter model IDs in the example config)
    - `python3 tools/local_llm/validate_router_config.py --path ~/.claude-code-router/config.json --require-env`
    - `make tool-probe`
    - `make probe-suite`

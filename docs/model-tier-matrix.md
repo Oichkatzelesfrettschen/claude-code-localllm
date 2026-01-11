@@ -34,21 +34,34 @@ python3 tools/local_llm/probe_suite.py --url http://127.0.0.1:11434/v1/chat/comp
 Endpoint: `http://127.0.0.1:8000/v1/chat/completions`
 
 Validated:
+- PASS: `Qwen/Qwen2.5-0.5B-Instruct` when started with:
+  - `--enable-auto-tool-choice`
+  - `--tool-call-parser hermes`
 - PASS: `Qwen/Qwen2.5-1.5B-Instruct` when started with:
   - `--enable-auto-tool-choice`
   - `--tool-call-parser hermes`
+- FAIL: `Qwen/Qwen2.5-Coder-1.5B-Instruct` (emits JSON in `message.content` under `hermes`)
 
 Re-run:
 ```
 tools/local_llm/runtimes/vllm_docker.sh Qwen/Qwen2.5-1.5B-Instruct
 python3 tools/local_llm/tool_call_probe.py --url http://127.0.0.1:8000/v1/chat/completions --model Qwen/Qwen2.5-1.5B-Instruct
+make runtime-probe-vllm
 ```
 
 Operational note: running vLLM concurrently with GPU-accelerated Ollama can
 exhaust VRAM and crash Ollama (treat as a blocking constraint).
 
 ## llama.cpp (OpenAI-compatible server)
-Placeholder support is wired in `tools/local_llm/runtime_matrix.json` as
-runtime `llamacpp`. Validation depends on the chosen GGUF model and chat
-template (see `docs/llamacpp-setup.md`).
+Validated:
+- PASS: `Qwen/Qwen2.5-0.5B-Instruct-GGUF` (`qwen2.5-0.5b-instruct-q4_k_m.gguf`)
+  with `--chat-template chatml` using `llama-server`.
 
+Re-run:
+```
+# Start llama-server (OpenAI-compatible)
+tools/local_llm/runtimes/llamacpp_server.sh /path/to/qwen2.5-0.5b-instruct-q4_k_m.gguf
+
+# Probe tool-calls (auto-detects the model id from /v1/models)
+make llamacpp-tool-probe
+```

@@ -13,26 +13,26 @@ This file replaces the unavailable TODOwrite tool. Items are tracked manually.
 7. [ ] Extend `tools/local_llm/policy_engine.py` to optionally route to a smaller local model under VRAM pressure.
 8. [ ] Add a “capability registry” (context length, tool support, runtime compatibility, tier).
 9. [ ] Add per-model metadata capture: `ollama show` + `ollama ps` snapshots into a JSON report.
-10. [ ] Add a vLLM tool-call parser matrix (which parser works for which model IDs).
-11. [ ] Validate vLLM tool-calls for at least 3 models (small, mid, coder) and record results.
-12. [ ] Add a vLLM-only `runtime_probe` Make target (doesn’t require Ollama running).
-13. [ ] Add a “one GPU runtime at a time” operational check (warn/error when both Ollama+vLLM are active).
-14. [ ] Add a GGUF model shortlist for 2GB/4GB tiers (llama.cpp path) with primary-source links.
-15. [ ] Validate at least one GGUF model tool-calling via `llama-server` and record results.
-16. [ ] Add `llamacpp` runtime probe config example and document required chat template assumptions.
+10. [x] Add a vLLM tool-call parser matrix (which parser works for which model IDs).
+11. [x] Validate vLLM tool-calls for at least 3 models (small, mid, coder) and record results.
+12. [x] Add a vLLM-only `runtime_probe` Make target (doesn’t require Ollama running).
+13. [x] Add a “one GPU runtime at a time” operational check (warn/error when both Ollama+vLLM are active).
+14. [x] Add a GGUF model shortlist for 2GB/4GB tiers (llama.cpp path) with primary-source links.
+15. [x] Validate at least one GGUF model tool-calling via `llama-server` and record results.
+16. [x] Add `llamacpp` runtime probe config example and document required chat template assumptions.
 17. [ ] Tighten `docs/router-config-schema.json` notes and keep it aligned with `claude-code-router` config evolution.
 18. [ ] Add `/router-validate` improvement: verify that router slots reference configured models.
 19. [ ] Add `/router-backup` retention policy (keep last N backups, configurable).
 20. [ ] Add a safe “local-first + OpenRouter + Claude escalation” reference config (documented rationale).
-21. [ ] Verify OpenRouter model IDs used in examples against current OpenRouter catalog (do not hardcode stale IDs).
+21. [x] Verify OpenRouter model IDs used in examples against current OpenRouter catalog (do not hardcode stale IDs).
 22. [ ] Document direct Gemini provider usage (AI Studio + Vertex) with validated endpoints and transformers.
 23. [ ] Add an “agent offload template” for delegating tasks to external models (what to include/exclude).
 24. [ ] Add a per-task “routing report” format and example output (why local vs remote).
 25. [ ] Add a stable prompt set for latency probes and document variance sources.
-26. [ ] Add failure-injection scenarios (timeout, malformed JSON, missing tool_calls) for probes.
-27. [ ] Normalize benchmark outputs into a versioned JSON schema for diffing between runs.
+26. [x] Add failure-injection scenarios (timeout, malformed JSON, missing tool_calls) for probes.
+27. [x] Normalize benchmark outputs into a versioned JSON schema for diffing between runs.
 28. [ ] Add “known limitations” doc section (unsupported models, tool parsers, VRAM contention).
-29. [ ] Add a lightweight CI check (lint JSON + run `make router-config-validate`).
+29. [x] Add a lightweight CI check (lint JSON + run `make router-config-validate`).
 30. [ ] Re-audit and update `docs/repo-audit.md` + `docs/todo.md` after each milestone.
 
 ## Blockers
@@ -53,4 +53,7 @@ This file replaces the unavailable TODOwrite tool. Items are tracked manually.
 - Added VRAM probe + VRAM bench runner (`make vram-probe`, `make vram-bench`).
 - Added VRAM-tier model catalogs and validated 2GB/4GB/8GB/12GB tier probe sets (Ollama).
 - Added vLLM Docker runner + validated vLLM tool-calls for `Qwen/Qwen2.5-1.5B-Instruct` using `--tool-call-parser hermes`.
-- Added llama.cpp runtime placeholder + docs (`docs/llamacpp-setup.md`).
+- Added vLLM tool parser matrix notes (`docs/vllm-tool-parser-matrix.md`) and parser registry (`tools/local_llm/vllm_tool_parsers.json`).
+- Added llama.cpp runtime docs + validated tool-calling for `qwen2.5-0.5b-instruct-q4_k_m.gguf` (`docs/llamacpp-setup.md`).
+- Added OpenRouter model ID validator (`make openrouter-model-check`) to keep examples current.
+- Added CI checks for local-LLM tooling (py_compile + json-lint + failure-injection + policy-regression + router-config-validate).

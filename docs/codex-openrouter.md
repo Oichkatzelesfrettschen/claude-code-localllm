@@ -17,6 +17,9 @@ Use the `openrouter` provider in `~/.claude-code-router/config.json`:
 
 Example: `docs/examples/router-config-openrouter.json`
 
+For a “codex-like” coding model, this repo currently uses:
+- `openai/gpt-5.1-codex-mini` (OpenRouter ID; validated against the public catalog)
+
 ## Validation expectations
 Treat tool calling as a hard requirement if you want these models to handle tool-using tasks:
 - Must produce OpenAI-compatible `tool_calls`.
@@ -28,4 +31,5 @@ Use:
 
 ## Notes
 OpenRouter model IDs change over time; keep examples as placeholders and validate against OpenRouter’s current catalog.
-
+This repo provides a helper:
+- `make openrouter-model-check`
