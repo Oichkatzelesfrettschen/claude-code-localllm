@@ -9,7 +9,7 @@ Detected on this machine (CachyOS / Arch):
 - Found: `bun`, `python3`, `jq`, `git`, `gh`, `node`, `npm`, `make`, `curl`
 - Found (containers): `docker`, `podman`, `devcontainer`
 - Found (GPU/local-LLM): `nvidia-smi`, `nvcc`, `ollama`
-- Installed (AUR/system): `devcontainer-cli` (`@devcontainers/cli`), `powershell-bin` (`pwsh`)
+- Installed (AUR/system): `devcontainer-cli` (`@devcontainers/cli`), `powershell-bin` (`pwsh`), `llama-cpp-cuda-git`
 - Notes: `lttng-ust` is installed; `lttng-ust2.12` is optional and conflicts with `lttng-ust` on this system.
 - Notes: GPU access inside containers is configured (`docker run --gpus all ... nvidia-smi` works on this machine).
 
@@ -72,8 +72,10 @@ Files: `tools/local_llm/runtimes/vllm_docker.sh`
 
 ### llama.cpp (server helper)
 Files: `tools/local_llm/runtimes/llamacpp_server.sh`
-- Required: `llama-server` in PATH (from a `llama.cpp` build or package)
+- Required: `llama-server` available (from a `llama.cpp` build or package)
 - Required: a GGUF model file on disk
+- Notes (Arch/CachyOS): `llama-cpp-cuda-git` installs `llama-server` under `/opt/llama-cpp/bin/llama-server`;
+  `tools/local_llm/runtimes/llamacpp_server.sh` detects this automatically.
 
 ### Plugin Development Tooling (Docs and Examples)
 Files: `plugins/plugin-dev/**`

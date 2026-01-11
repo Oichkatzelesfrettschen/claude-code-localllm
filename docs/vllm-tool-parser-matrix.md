@@ -8,7 +8,7 @@ with valid JSON arguments.
 
 ## Qwen/Qwen2.5-1.5B-Instruct
 
-Server: `vllm/vllm-openai:latest` (Docker), `MAX_MODEL_LEN=4096`, `GPU_MEM_UTIL=0.70`.
+Server: `vllm/vllm-openai` (Docker), `MAX_MODEL_LEN=4096`, `GPU_MEM_UTIL=0.80`.
 
 | Parser | Result | Notes |
 | --- | --- | --- |
@@ -16,8 +16,24 @@ Server: `vllm/vllm-openai:latest` (Docker), `MAX_MODEL_LEN=4096`, `GPU_MEM_UTIL=
 | `pythonic` | FAIL | Emits `<tool_call> ... </tool_call>` in `message.content` (no `tool_calls`). |
 | `openai` | FAIL | Returned HTTP 500: `OpenAIToolParser requires token IDs and does not support text-based extraction.` |
 
+## Qwen/Qwen2.5-0.5B-Instruct
+
+Server: `vllm/vllm-openai` (Docker), `MAX_MODEL_LEN=4096`, `GPU_MEM_UTIL=0.80`.
+
+| Parser | Result | Notes |
+| --- | --- | --- |
+| `hermes` | PASS | Produces OpenAI `tool_calls`; passes `tools/local_llm/tool_call_probe.py`. |
+
+## Qwen/Qwen2.5-Coder-1.5B-Instruct
+
+Server: `vllm/vllm-openai` (Docker), `MAX_MODEL_LEN=4096`, `GPU_MEM_UTIL=0.80`.
+
+| Parser | Result | Notes |
+| --- | --- | --- |
+| `hermes` | FAIL | Emits a JSON blob in `message.content` (no `tool_calls`). |
+| `openai` | FAIL | Returned HTTP 500: `OpenAIToolParser requires token IDs and does not support text-based extraction.` |
+
 ## Next models to validate
 - Qwen/Qwen2.5-7B-Instruct (likely: `hermes` or `qwen3_*` parsers; validate)
 - A coder-tuned model (tool calling may differ)
 - A Mistral instruct model (try `mistral` parser)
-

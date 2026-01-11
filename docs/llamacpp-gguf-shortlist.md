@@ -11,6 +11,7 @@ or a different probe mode.
 ## 2GB tier candidates
 - `Qwen/Qwen2.5-0.5B-Instruct-GGUF` (license tag: Apache-2.0)
   - https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF
+  - Validated (tool-calls): `qwen2.5-0.5b-instruct-q4_k_m.gguf` via `llama-server` + `make llamacpp-tool-probe`
 - `Qwen/Qwen2.5-1.5B-Instruct-GGUF` (license tag: Apache-2.0)
   - https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF
 - `unsloth/Llama-3.2-1B-Instruct-GGUF` (license tag: Llama 3.2)
@@ -31,4 +32,3 @@ or a different probe mode.
 2) Start `llama-server` using `tools/local_llm/runtimes/llamacpp_server.sh`.
 3) Run `python3 tools/local_llm/tool_call_probe.py` against `http://127.0.0.1:8081/v1/chat/completions`.
 4) If output lands in `message.content` (no `tool_calls`), add an adapter/probe mode to parse `<tool_call>` blocks.
-

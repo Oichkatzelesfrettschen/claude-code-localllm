@@ -1,11 +1,10 @@
 {
   "description": "Known vLLM tool-call parser choices and their typical output style. Validate empirically per model.",
   "parsers": [
-    { "name": "hermes", "notes": "Worked for Qwen/Qwen2.5-1.5B-Instruct in this repo when started with --enable-auto-tool-choice." },
+    { "name": "hermes", "notes": "Worked for Qwen/Qwen2.5-{0.5B,1.5B}-Instruct in this repo when started with --enable-auto-tool-choice." },
     { "name": "openai", "notes": "May require token-id support; can error for some models/runtimes." },
     { "name": "pythonic", "notes": "May emit <tool_call> XML-ish tags in content for some models (non-OpenAI tool_calls)." },
     { "name": "mistral", "notes": "For Mistral-instruct family; validate." },
     { "name": "llama3_json", "notes": "For Llama3-style JSON tool calling; validate." }
   ]
 }
-

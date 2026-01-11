@@ -24,6 +24,12 @@ Validate the example router configs in `docs/examples/`:
 make router-config-validate
 ```
 
+## OpenRouter Model ID Check
+Validate that OpenRouter model IDs referenced by the example config still exist:
+```
+make openrouter-model-check
+```
+
 ## JSON Lint
 Validate JSON files used by tooling and docs examples:
 ```

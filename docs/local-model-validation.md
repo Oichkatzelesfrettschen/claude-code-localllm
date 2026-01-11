@@ -14,6 +14,8 @@ validation.
 Re-run:
 - `python3 tools/local_llm/probe_suite.py --url http://127.0.0.1:11434/v1/chat/completions --config tools/local_llm/probe_models_2gb.json`
 - `python3 tools/local_llm/probe_suite.py --url http://127.0.0.1:11434/v1/chat/completions --config tools/local_llm/probe_models_4gb.json`
+- `python3 tools/local_llm/probe_suite.py --url http://127.0.0.1:11434/v1/chat/completions --config tools/local_llm/probe_models_8gb.json`
+- `python3 tools/local_llm/probe_suite.py --url http://127.0.0.1:11434/v1/chat/completions --config tools/local_llm/probe_models_12gb.json`
 
 ### 2GB tier (validated)
 - PASS: `qwen2.5:0.5b-instruct`, `qwen2.5:1.5b-instruct`, `llama3.2:1b`
@@ -22,12 +24,19 @@ Re-run:
 - PASS: `llama3.2:3b`, `qwen2.5:3b-instruct`, `qwen2.5:1.5b-instruct`
 - FAIL (tools unsupported by runtime): `gemma2:2b`
 
-### 8GB / 12GB tiers
 ### 8GB tier (validated)
 - PASS: `qwen2.5:7b-instruct`, `mistral:latest`, `llama3.1:latest`
 
 ### 12GB tier (validated)
 - PASS: `qwen2.5:7b-instruct`, `llama3.1:latest`, `mistral:latest`
+
+## llama.cpp (GGUF) validation
+This uses `llama-server` (OpenAI-compatible) and the same strict `tool_calls` probe.
+
+Validated:
+- PASS: `Qwen/Qwen2.5-0.5B-Instruct-GGUF` (`qwen2.5-0.5b-instruct-q4_k_m.gguf`) with:
+  - `tools/local_llm/runtimes/llamacpp_server.sh` (chat template: `chatml`)
+  - `make llamacpp-tool-probe` (auto-detects `/v1/models`; uses a longer timeout)
 
 ## qwen2.5:7b-instruct (Ollama)
 **Test:** OpenAI-style tool call via `/v1/chat/completions` with `tools[]`.

@@ -9,6 +9,9 @@ Candidate GGUF models: `docs/llamacpp-gguf-shortlist.md`.
 - `llama-server` available in PATH (from a local `llama.cpp` build or a package)
 - A GGUF model file (quantized)
 
+Arch/CachyOS note: the `llama-cpp-cuda-git` package (chaotic-aur) installs binaries under
+`/opt/llama-cpp/bin/`. This repo’s helper script detects that path automatically.
+
 ## Start server
 This repo includes a helper:
 ```
@@ -27,5 +30,6 @@ make llamacpp-tool-probe
 
 ## Notes
 - Tool-call compliance depends heavily on the model + chat template.
+- The Make target auto-detects the server’s advertised model ID via `GET /v1/models` and uses a longer timeout.
 - Use `tools/local_llm/runtime_probe.py` with a temporary config that enables
   the `llamacpp` runtime once you have a known-good GGUF model.

@@ -72,7 +72,7 @@ supply-chain attacks where a compromised `latest` tag could introduce malicious 
 
 Current pinned digest (as of script version):
 ```
-vllm/vllm-openai@sha256:6a43a2dfb6fb4681fe1732d7cd1a0834590b44b7d2bc483886883655468a4591
+vllm/vllm-openai@sha256:d623253f2ba246378421c9642e20885e65257f38418ff26d48c81aea1702521b
 ```
 
 ### Updating the Pinned Image

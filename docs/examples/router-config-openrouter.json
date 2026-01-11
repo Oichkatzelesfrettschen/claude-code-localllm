@@ -15,8 +15,8 @@
       "api_key": "$OPENROUTER_API_KEY",
       "models": [
         "google/gemini-2.5-pro-preview",
-        "google/gemini-2.0-flash",
-        "openai/gpt-5-mini"
+        "google/gemini-2.0-flash-001",
+        "openai/gpt-5.1-codex-mini"
       ],
       "transformer": { "use": ["openrouter"] }
     }
@@ -24,9 +24,8 @@
   "Router": {
     "default": "ollama,qwen2.5:7b-instruct",
     "background": "ollama,mistral:latest",
-    "think": "openrouter,openai/gpt-5-mini",
+    "think": "openrouter,openai/gpt-5.1-codex-mini",
     "longContext": "openrouter,google/gemini-2.5-pro-preview",
     "longContextThreshold": 60000
   }
 }
-

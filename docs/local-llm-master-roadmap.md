@@ -8,7 +8,7 @@ This consolidates:
 
 ## Current State (Snapshot)
 - Upstream sync: `main` tracks `anthropics/claude-code` (`upstream/main`).
-- Working branch: `local-llm-integration` (docs + probes + plugin).
+- Working branch: `main` (feature work lands via short-lived PR branches; see `docs/todo.md`).
 - Local tool-call validation (Ollama): VRAM-tier PASS sets recorded in `docs/local-model-validation.md` (2GB/4GB/8GB/12GB).
 - vLLM tool-call validation (Docker): PASS `Qwen/Qwen2.5-1.5B-Instruct` with `--enable-auto-tool-choice` + `--tool-call-parser hermes` (see `docs/vllm-setup.md`).
 - Operational constraint: avoid running GPU-accelerated Ollama and vLLM simultaneously unless VRAM is explicitly budgeted.

@@ -52,7 +52,7 @@ exec docker run \
   -p "127.0.0.1:${PORT}:8000" \
   -v "${HF_CACHE_DIR}:/root/.cache/huggingface" \
   -e HF_HOME=/root/.cache/huggingface \
-  vllm/vllm-openai@sha256:6a43a2dfb6fb4681fe1732d7cd1a0834590b44b7d2bc483886883655468a4591 \
+  vllm/vllm-openai@sha256:d623253f2ba246378421c9642e20885e65257f38418ff26d48c81aea1702521b \
   "${MODEL_ID}" \
   --served-model-name "${MODEL_ID}" \
   --host 0.0.0.0 \
