@@ -24,6 +24,12 @@ Validate the example router configs in `docs/examples/`:
 make router-config-validate
 ```
 
+## JSON Lint
+Validate JSON files used by tooling and docs examples:
+```
+make json-lint
+```
+
 ## Policy Check
 Run the routing policy engine with sample paths:
 ```
@@ -69,4 +75,10 @@ make vram-probe
 Run tool-call + latency probes while sampling VRAM before/after each model:
 ```
 make vram-bench VRAM_BENCH_CONFIG=tools/local_llm/probe_models_4gb.json
+```
+
+## Failure Injection (probes)
+Run local mock-server scenarios to ensure probes fail gracefully (no tracebacks, correct exit codes):
+```
+make failure-injection
 ```

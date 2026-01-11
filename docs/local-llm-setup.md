@@ -34,6 +34,7 @@ ccr status
 
 ## 6) Validate Tool Calls
 ```
+make ollama-preflight
 make tool-probe
 make probe-suite
 make runtime-probe
@@ -46,8 +47,8 @@ make vram-probe
 - If router fails to start, re-check `~/.claude-code-router/config.json`.
 
 ## Optional: vLLM Runtime (GPU)
-After installing `python-vllm-cuda` or `vllama`, start a vLLM server and add it
-to `tools/local_llm/runtime_matrix.json` (set `enabled: true`) before running:
-```
-make runtime-probe
-```
+Use the Docker-based vLLM path described in `docs/vllm-setup.md`.
+
+Notes:
+- vLLM tool-calling requires `--enable-auto-tool-choice` + a working `--tool-call-parser`.
+- Avoid running vLLM and GPU-accelerated Ollama simultaneously unless you explicitly budget VRAM.
