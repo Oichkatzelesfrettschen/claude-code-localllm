@@ -9,32 +9,32 @@
     {
       "tier": "2gb",
       "vram_max_gib": 2,
-      "notes": "Target: iGPU / very low VRAM. Prefer small instruct models. Driver: 470.x-580.x",
+      "notes": "Target: iGPU / very low VRAM. Prefer small instruct models. Driver: 580.x",
       "example_gpus": ["GT 1030", "GTX 1050 2GB", "GTX 950"]
     },
     {
       "tier": "3gb",
       "vram_max_gib": 3,
-      "notes": "GTX 1060 3GB, GTX 780. Fits 1.5B models comfortably. Driver: 470.x-580.x",
+      "notes": "GTX 1060 3GB, GTX 780. Fits 1.5B models comfortably. Driver: 580.x (GTX 1060 3GB), 470.x-580.x (GTX 780)",
       "example_gpus": ["GTX 1060 3GB", "GTX 780"]
     },
     {
       "tier": "4gb",
       "vram_max_gib": 4,
-      "notes": "GTX 1050 Ti, GTX 1650, GTX 980. Tool calling may be weaker. Driver: 470.x-590+",
+      "notes": "GTX 1050 Ti, GTX 1650, GTX 980. Tool calling may be weaker. Driver: 580.x-590+",
       "example_gpus": ["GTX 1050 Ti", "GTX 1650", "GTX 980"]
     },
     {
       "tier": "6gb",
       "vram_max_gib": 6,
-      "notes": "GTX 1060 6GB, GTX 1660, RTX 2060. Comfortable for 3B models. Driver: 580.x-590+",
+      "notes": "GTX 1060 6GB, GTX 1660, RTX 2060. Comfortable for 3B models. Drivers: GTX 1060/980 Ti: 580.x; GTX 1660/RTX 2060: 590+",
       "example_gpus": ["GTX 1060 6GB", "GTX 1660", "RTX 2060", "GTX 980 Ti"]
     },
     {
       "tier": "8gb",
       "vram_max_gib": 8,
       "notes": "RTX 3060, RTX 4060, RTX 2070. Fits 7B models. Driver: 590+",
-      "example_gpus": ["RTX 3060", "RTX 4060", "RTX 2070", "GTX 1080"]
+      "example_gpus": ["RTX 3060", "RTX 4060", "RTX 2070", "RTX 3060 Ti"]
     },
     {
       "tier": "10gb",
@@ -45,7 +45,7 @@
     {
       "tier": "11gb",
       "vram_max_gib": 11,
-      "notes": "GTX 1080 Ti, RTX 2080 Ti. Comfortable for 7-8B models. Driver: 580.x-590+",
+      "notes": "GTX 1080 Ti, RTX 2080 Ti. Comfortable for 7-8B models. Driver: 580.x (GTX 1080 Ti) or 590+ (RTX 2080 Ti)",
       "example_gpus": ["GTX 1080 Ti", "RTX 2080 Ti"]
     },
     {
