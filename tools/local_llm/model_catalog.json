@@ -21,7 +21,7 @@
     {
       "tier": "4gb",
       "vram_max_gib": 4,
-      "notes": "GTX 1050 Ti, GTX 1650, GTX 980. Tool calling may be weaker. Driver: 580.x-590+",
+      "notes": "GTX 1050 Ti, GTX 1650, GTX 980. Tool calling may be weaker. Driver: 580.x (GTX 1050 Ti, GTX 980), 590+ (GTX 1650)",
       "example_gpus": ["GTX 1050 Ti", "GTX 1650", "GTX 980"]
     },
     {
