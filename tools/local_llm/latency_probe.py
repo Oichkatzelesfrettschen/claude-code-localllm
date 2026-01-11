@@ -38,8 +38,12 @@ def run_once(url: str, model: str, prompt: str, timeout_sec: int) -> dict:
         data = json.loads(response.read().decode("utf-8"))
     elapsed = time.time() - start
     usage = data.get("usage", {})
-    output_tokens = int(usage.get("completion_tokens", 0))
-    tokens_per_sec = 0.0 if elapsed == 0 else output_tokens / elapsed
+    if not isinstance(usage, dict) or "completion_tokens" not in usage:
+        output_tokens = None
+        tokens_per_sec = None
+    else:
+        output_tokens = int(usage.get("completion_tokens", 0))
+        tokens_per_sec = None if elapsed == 0 else output_tokens / elapsed
     return {
         "elapsed_sec": elapsed,
         "output_tokens": output_tokens,
@@ -66,7 +70,8 @@ def main() -> int:
         print(json.dumps({"ok": False, "error": f"timeout ({exc})"}))
         return 1
     avg_latency = sum(r["elapsed_sec"] for r in results) / len(results)
-    avg_tps = sum(r["tokens_per_sec"] for r in results) / len(results)
+    tps_values = [r["tokens_per_sec"] for r in results if isinstance(r.get("tokens_per_sec"), (int, float))]
+    avg_tps = None if not tps_values else sum(tps_values) / len(tps_values)
     print(
         json.dumps(
             {

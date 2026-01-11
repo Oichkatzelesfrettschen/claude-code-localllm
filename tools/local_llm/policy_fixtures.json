@@ -20,6 +20,12 @@
       "expected": { "route": "claude_only", "reason": "denylist_path" }
     },
     {
+      "name": "denylist_windows_style_backslashes",
+      "paths": ["C:\\\\Users\\\\user\\\\.ssh\\\\id_rsa"],
+      "tokens": 0,
+      "expected": { "route": "claude_only", "reason": "denylist_path" }
+    },
+    {
       "name": "sensitive_auth_path",
       "paths": ["src/auth/middleware.ts"],
       "tokens": 0,
@@ -33,4 +39,3 @@
     }
   ]
 }
-

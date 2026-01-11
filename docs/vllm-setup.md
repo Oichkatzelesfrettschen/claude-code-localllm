@@ -30,7 +30,10 @@ vLLM requires tool-choice support to be enabled at server start:
 - `--tool-call-parser ...`
 
 The helper enables this by default with `TOOL_CALL_PARSER=hermes` (override via
-env if needed).
+env if needed). See `tools/local_llm/vllm_tool_parsers.json` for a small
+starter list of parsers and known behaviors.
+
+Empirical results so far are tracked in `docs/vllm-tool-parser-matrix.md`.
 
 ## Probing vLLM
 Single-model tool-call probe:
@@ -52,6 +55,10 @@ If Ollama is using GPU acceleration, running vLLM simultaneously can cause
 `cudaMalloc failed: out of memory` errors in Ollama. Treat this as a blocking
 operational constraint: run one GPU runtime at a time unless you explicitly
 budget VRAM for both.
+
+This repo enforces a basic guardrail in Make targets via:
+- `make gpu-runtime-guard`
+- `make ollama-preflight`
 
 ## Stop vLLM
 ```
@@ -102,4 +109,3 @@ To update to a newer vLLM release:
 
 This process ensures you consciously review and validate each image update rather than
 automatically trusting upstream changes.
-

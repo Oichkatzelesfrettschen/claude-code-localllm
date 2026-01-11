@@ -1,0 +1,14 @@
+{
+  "latency_prompt": "Say hello in one sentence.",
+  "iterations": 3,
+  "timeout_sec": 60,
+  "runtimes": [
+    {
+      "name": "vllm",
+      "url": "http://127.0.0.1:8000/v1/chat/completions",
+      "models": ["Qwen/Qwen2.5-1.5B-Instruct"],
+      "enabled": true
+    }
+  ]
+}
+

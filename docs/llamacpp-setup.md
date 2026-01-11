@@ -3,6 +3,8 @@
 For very low VRAM footprints (2GB/4GB), `llama.cpp` + GGUF quantizations are
 often more practical than vLLM.
 
+Candidate GGUF models: `docs/llamacpp-gguf-shortlist.md`.
+
 ## Prerequisites
 - `llama-server` available in PATH (from a local `llama.cpp` build or a package)
 - A GGUF model file (quantized)
@@ -20,13 +22,10 @@ Defaults:
 
 ## Probe
 ```
-python3 tools/local_llm/tool_call_probe.py \
-  --url http://127.0.0.1:8081/v1/chat/completions \
-  --model local-gguf
+make llamacpp-tool-probe
 ```
 
 ## Notes
 - Tool-call compliance depends heavily on the model + chat template.
 - Use `tools/local_llm/runtime_probe.py` with a temporary config that enables
   the `llamacpp` runtime once you have a known-good GGUF model.
-
