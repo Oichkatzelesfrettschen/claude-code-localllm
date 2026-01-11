@@ -1,0 +1,48 @@
+name: local-llm-validate
+
+on:
+  pull_request:
+    paths:
+      - "tools/local_llm/**"
+      - "docs/**"
+      - "Makefile"
+      - ".github/workflows/local-llm-validate.yml"
+  push:
+    branches: ["main"]
+    paths:
+      - "tools/local_llm/**"
+      - "docs/**"
+      - "Makefile"
+      - ".github/workflows/local-llm-validate.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Python syntax check
+        run: |
+          python3 -m py_compile tools/local_llm/*.py
+
+      - name: JSON lint
+        run: |
+          make json-lint
+
+      - name: Failure injection (probe hardening)
+        run: |
+          make failure-injection
+
+      - name: Validate router example configs
+        run: |
+          make router-config-validate
+
+      - name: Policy regression fixtures
+        run: |
+          make policy-regression

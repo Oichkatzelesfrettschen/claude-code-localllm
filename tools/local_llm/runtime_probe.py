@@ -69,7 +69,8 @@ def probe_latency(url: str, model: str, prompt: str, iterations: int, timeout_se
         headers={"Content-Type": "application/json"},
         method="POST",
     )
-    results: List[Dict[str, float]] = []
+    results: List[Dict[str, Any]] = []
+    missing_usage = False
     for _ in range(iterations):
         start = time.time()
         try:
@@ -85,8 +86,15 @@ def probe_latency(url: str, model: str, prompt: str, iterations: int, timeout_se
             return {"ok": False, "error": f"timeout ({exc})"}
         elapsed = time.time() - start
         usage = data.get("usage", {})
-        output_tokens = int(usage.get("completion_tokens", 0))
-        tokens_per_sec = 0.0 if elapsed == 0 else output_tokens / elapsed
+        output_tokens: Optional[int]
+        tokens_per_sec: Optional[float]
+        if not isinstance(usage, dict) or "completion_tokens" not in usage:
+            missing_usage = True
+            output_tokens = None
+            tokens_per_sec = None
+        else:
+            output_tokens = int(usage.get("completion_tokens", 0))
+            tokens_per_sec = None if elapsed == 0 else float(output_tokens / elapsed)
         results.append(
             {
                 "elapsed_sec": elapsed,
@@ -96,12 +104,16 @@ def probe_latency(url: str, model: str, prompt: str, iterations: int, timeout_se
         )
 
     avg_latency = sum(r["elapsed_sec"] for r in results) / len(results)
-    avg_tps = sum(r["tokens_per_sec"] for r in results) / len(results)
+    tps_values = [r["tokens_per_sec"] for r in results if isinstance(r.get("tokens_per_sec"), (int, float))]
+    avg_tps: Optional[float] = None
+    if tps_values:
+        avg_tps = sum(float(v) for v in tps_values) / len(tps_values)
     return {
         "ok": True,
         "avg_latency_sec": avg_latency,
         "avg_tokens_per_sec": avg_tps,
         "iterations": iterations,
+        "usage_missing": missing_usage,
     }
 
 
@@ -143,7 +155,7 @@ def main() -> int:
                     }
                 )
 
-    summary = {"results": results, "failures": failures}
+    summary = {"schema_version": "runtime-probe-v1", "results": results, "failures": failures}
     output = json.dumps(summary, indent=2)
     print(output)
     if args.output:

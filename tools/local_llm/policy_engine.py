@@ -14,8 +14,15 @@ def load_rules(path: Path) -> Dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def normalize_path(value: str) -> str:
+    normalized = value.replace("\\", "/")
+    normalized = normalized.replace("//", "/")
+    return normalized
+
+
 def match_any(path: str, patterns: List[str]) -> bool:
-    return any(fnmatch.fnmatch(path, pattern) for pattern in patterns)
+    normalized = normalize_path(path)
+    return any(fnmatch.fnmatch(normalized, normalize_path(pattern)) for pattern in patterns)
 
 
 def evaluate(

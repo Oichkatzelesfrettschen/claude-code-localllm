@@ -124,6 +124,7 @@ def main() -> int:
             failures.append({"model": model, "error": tool.get("error") or latency.get("error") or "probe failed"})
 
     payload = {
+        "schema_version": "vram-bench-v1",
         "ok": not failures,
         "timestamp": time.time(),
         "duration_sec": round(time.time() - started, 3),

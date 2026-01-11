@@ -19,6 +19,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--url", required=True, help="Chat completions URL")
     parser.add_argument("--config", required=True, help="Path to models JSON")
     parser.add_argument("--timeout-sec", type=int, default=60, help="Request timeout")
+    parser.add_argument(
+        "--fail-fast",
+        action="store_true",
+        help="Stop after the first failure (default: continue and report all failures)",
+    )
     return parser.parse_args()
 
 
@@ -70,6 +75,9 @@ def main() -> int:
         ok, reason = probe_model(args.url, model, timeout_sec=args.timeout_sec)
         if not ok:
             failures[model] = reason
+            if args.fail_fast:
+                print(f"{model}: FAIL ({reason})")
+                return 1
 
     if failures:
         for model, reason in failures.items():
