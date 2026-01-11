@@ -1,0 +1,6 @@
+{
+  "models": ["qwen2.5:7b-instruct", "llama3.1:latest", "mistral:latest"],
+  "tier": "11gb",
+  "vram_max_gib": 11,
+  "notes": "GTX 1080 Ti, RTX 2080 Ti. Comfortable for 7-8B models."
+}

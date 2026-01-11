@@ -1,0 +1,6 @@
+{
+  "models": ["qwen2.5:72b-instruct", "llama3.1:70b"],
+  "tier": "32gb+",
+  "vram_max_gib": 32,
+  "notes": "RTX 5090, A100 40GB/80GB, H100. Full 70B+ models."
+}

@@ -8,7 +8,7 @@ NPM_VERSION ?= 0.80.3
 NPM_TARBALL ?= /tmp/devcontainer-cli-0.80.3.tgz
 VRAM_BENCH_CONFIG ?= tools/local_llm/probe_models.json
 
-.PHONY: verify-devcontainer cost-model json-lint openrouter-model-check gpu-runtime-guard ollama-preflight llamacpp-preflight tool-probe llamacpp-tool-probe policy-check policy-regression probe-suite probe-suite-candidates latency-probe runtime-probe runtime-probe-vllm vram-probe vram-bench router-config-validate failure-injection
+.PHONY: verify-devcontainer cost-model json-lint openrouter-model-check gpu-runtime-guard ollama-preflight llamacpp-preflight tool-probe llamacpp-tool-probe policy-check policy-regression probe-suite probe-suite-candidates latency-probe runtime-probe runtime-probe-vllm vram-probe vram-bench router-config-validate failure-injection lint-python lint-shell lint typecheck test pre-commit-install pre-commit-run
 
 verify-devcontainer:
 	curl -L -o "$(NPM_TARBALL)" "https://registry.npmjs.org/$(NPM_PACKAGE)/-/cli-$(NPM_VERSION).tgz"
@@ -91,3 +91,25 @@ router-config-validate:
 
 failure-injection:
 	$(PYTHON) tools/local_llm/failure_injection.py
+
+# Static analysis and testing targets
+lint-python:
+	ruff check tools/local_llm/ plugins/hookify/ examples/
+	ruff format --check tools/local_llm/ plugins/hookify/ examples/
+
+lint-shell:
+	shellcheck -S warning tools/local_llm/runtimes/*.sh .devcontainer/*.sh 2>/dev/null || true
+
+lint: lint-python lint-shell json-lint
+
+typecheck:
+	mypy tools/local_llm/ --ignore-missing-imports
+
+test:
+	pytest tests/ -v
+
+pre-commit-install:
+	pre-commit install
+
+pre-commit-run:
+	pre-commit run --all-files

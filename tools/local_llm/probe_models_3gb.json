@@ -1,0 +1,6 @@
+{
+  "models": ["qwen2.5:1.5b-instruct", "llama3.2:1b"],
+  "tier": "3gb",
+  "vram_max_gib": 3,
+  "notes": "GTX 1060 3GB, GTX 780. Fits 1.5B models comfortably."
+}

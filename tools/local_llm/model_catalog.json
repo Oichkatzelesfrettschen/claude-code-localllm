@@ -1,46 +1,220 @@
 {
   "tiers": [
     {
+      "tier": "1gb",
+      "vram_max_gib": 1,
+      "notes": "Extreme low VRAM (iGPU, GT 710/720/750 1GB). Q4 quantization required. Driver: 470.x",
+      "example_gpus": ["GT 710", "GT 720", "GTX 750 1GB"]
+    },
+    {
       "tier": "2gb",
       "vram_max_gib": 2,
-      "notes": "Target: iGPU / very low VRAM. Prefer small instruct models; tool-calling compliance must be tested."
+      "notes": "Target: iGPU / very low VRAM. Prefer small instruct models. Driver: 470.x-580.x",
+      "example_gpus": ["GT 1030", "GTX 1050 2GB", "GTX 950"]
+    },
+    {
+      "tier": "3gb",
+      "vram_max_gib": 3,
+      "notes": "GTX 1060 3GB, GTX 780. Fits 1.5B models comfortably. Driver: 470.x-580.x",
+      "example_gpus": ["GTX 1060 3GB", "GTX 780"]
     },
     {
       "tier": "4gb",
       "vram_max_gib": 4,
-      "notes": "Target: older GPUs / laptop dGPUs. Tool calling may be weaker; validate strictly."
+      "notes": "GTX 1050 Ti, GTX 1650, GTX 980. Tool calling may be weaker. Driver: 470.x-590+",
+      "example_gpus": ["GTX 1050 Ti", "GTX 1650", "GTX 980"]
+    },
+    {
+      "tier": "6gb",
+      "vram_max_gib": 6,
+      "notes": "GTX 1060 6GB, GTX 1660, RTX 2060. Comfortable for 3B models. Driver: 580.x-590+",
+      "example_gpus": ["GTX 1060 6GB", "GTX 1660", "RTX 2060", "GTX 980 Ti"]
     },
     {
       "tier": "8gb",
       "vram_max_gib": 8,
-      "notes": "Target: midrange GPUs. Candidate for small-to-mid models; test latency and tool-call stability."
+      "notes": "RTX 3060, RTX 4060, RTX 2070. Fits 7B models. Driver: 590+",
+      "example_gpus": ["RTX 3060", "RTX 4060", "RTX 2070", "GTX 1080"]
+    },
+    {
+      "tier": "10gb",
+      "vram_max_gib": 10,
+      "notes": "RTX 3080 10GB. Fits 7B models with room for context. Driver: 590+",
+      "example_gpus": ["RTX 3080 10GB"]
+    },
+    {
+      "tier": "11gb",
+      "vram_max_gib": 11,
+      "notes": "GTX 1080 Ti, RTX 2080 Ti. Comfortable for 7-8B models. Driver: 580.x-590+",
+      "example_gpus": ["GTX 1080 Ti", "RTX 2080 Ti"]
     },
     {
       "tier": "12gb",
       "vram_max_gib": 12,
-      "notes": "Target: RTX 4070 Ti class. Comfortable for 7B-ish models; still watch fragmentation/low-vram mode."
+      "notes": "RTX 3060 12GB, RTX 4070, RTX 3080 Ti. 7B-14B range. Driver: 590+",
+      "example_gpus": ["RTX 3060 12GB", "RTX 4070", "RTX 4070 Ti", "RTX 3080 Ti"]
+    },
+    {
+      "tier": "16gb",
+      "vram_max_gib": 16,
+      "notes": "RTX 4080, RTX 4060 Ti 16GB, RTX 5080. Fits 14B models. Driver: 590+",
+      "example_gpus": ["RTX 4080", "RTX 4060 Ti 16GB", "RTX 5080"]
+    },
+    {
+      "tier": "24gb",
+      "vram_max_gib": 24,
+      "notes": "RTX 3090, RTX 4090. Fits 32B or Q4-quantized 70B. Driver: 590+",
+      "example_gpus": ["RTX 3090", "RTX 3090 Ti", "RTX 4090"]
+    },
+    {
+      "tier": "32gb+",
+      "vram_max_gib": 32,
+      "notes": "RTX 5090, A100 40GB/80GB, H100. Full 70B+ models. Driver: 590+",
+      "example_gpus": ["RTX 5090", "A100 40GB", "A100 80GB", "H100"]
     }
   ],
   "ollama_candidates": {
-    "2gb": [
-      "qwen2.5:0.5b-instruct",
-      "qwen2.5:1.5b-instruct",
-      "llama3.2:1b"
-    ],
-    "4gb": [
-      "llama3.2:3b",
-      "qwen2.5:3b-instruct",
-      "qwen2.5:1.5b-instruct"
-    ],
-    "8gb": [
-      "qwen2.5:7b-instruct",
-      "mistral:latest",
-      "llama3.1:latest"
-    ],
-    "12gb": [
-      "qwen2.5:7b-instruct",
-      "llama3.1:latest",
-      "mistral:latest"
-    ]
+    "1gb": ["qwen2.5:0.5b-instruct"],
+    "2gb": ["qwen2.5:0.5b-instruct", "qwen2.5:1.5b-instruct", "llama3.2:1b"],
+    "3gb": ["qwen2.5:1.5b-instruct", "llama3.2:1b"],
+    "4gb": ["llama3.2:3b", "qwen2.5:3b-instruct", "qwen2.5:1.5b-instruct"],
+    "6gb": ["llama3.2:3b", "qwen2.5:3b-instruct"],
+    "8gb": ["qwen2.5:7b-instruct", "mistral:latest", "llama3.1:latest"],
+    "10gb": ["qwen2.5:7b-instruct", "llama3.1:latest"],
+    "11gb": ["qwen2.5:7b-instruct", "llama3.1:latest", "mistral:latest"],
+    "12gb": ["qwen2.5:7b-instruct", "llama3.1:latest", "mistral:latest"],
+    "16gb": ["qwen2.5:14b-instruct", "llama3.1:latest", "mistral:latest"],
+    "24gb": ["qwen2.5:32b-instruct", "llama3.1:70b-q4_K_M"],
+    "32gb+": ["qwen2.5:72b-instruct", "llama3.1:70b"]
+  },
+  "driver_branches": {
+    "590+": {
+      "supported_architectures": ["Turing", "Ampere", "Ada", "Blackwell"],
+      "min_gpu": "GTX 1650",
+      "notes": "Current mainline driver. Open kernel modules."
+    },
+    "580.x": {
+      "supported_architectures": ["Maxwell", "Pascal"],
+      "min_gpu": "GTX 950",
+      "max_gpu": "GTX 1080 Ti",
+      "notes": "Legacy branch. Quarterly security updates only."
+    },
+    "470.x": {
+      "supported_architectures": ["Kepler", "Maxwell (GTX 750/750 Ti)"],
+      "min_gpu": "GT 710",
+      "max_gpu": "GTX 780 Ti",
+      "notes": "EOL September 2024. No Wayland support."
+    }
+  },
+  "model_metadata": {
+    "qwen2.5:0.5b-instruct": {
+      "license": "Apache-2.0",
+      "license_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct",
+      "distribution_ok": true,
+      "parameters": "0.5B",
+      "context_length": 32768,
+      "tool_support": true
+    },
+    "qwen2.5:1.5b-instruct": {
+      "license": "Apache-2.0",
+      "license_url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct",
+      "distribution_ok": true,
+      "parameters": "1.5B",
+      "context_length": 32768,
+      "tool_support": true
+    },
+    "qwen2.5:3b-instruct": {
+      "license": "Apache-2.0",
+      "license_url": "https://huggingface.co/Qwen/Qwen2.5-3B-Instruct",
+      "distribution_ok": true,
+      "parameters": "3B",
+      "context_length": 32768,
+      "tool_support": true
+    },
+    "qwen2.5:7b-instruct": {
+      "license": "Apache-2.0",
+      "license_url": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct",
+      "distribution_ok": true,
+      "parameters": "7B",
+      "context_length": 131072,
+      "tool_support": true
+    },
+    "qwen2.5:14b-instruct": {
+      "license": "Apache-2.0",
+      "license_url": "https://huggingface.co/Qwen/Qwen2.5-14B-Instruct",
+      "distribution_ok": true,
+      "parameters": "14B",
+      "context_length": 131072,
+      "tool_support": true
+    },
+    "qwen2.5:32b-instruct": {
+      "license": "Apache-2.0",
+      "license_url": "https://huggingface.co/Qwen/Qwen2.5-32B-Instruct",
+      "distribution_ok": true,
+      "parameters": "32B",
+      "context_length": 131072,
+      "tool_support": true
+    },
+    "qwen2.5:72b-instruct": {
+      "license": "Apache-2.0",
+      "license_url": "https://huggingface.co/Qwen/Qwen2.5-72B-Instruct",
+      "distribution_ok": true,
+      "parameters": "72B",
+      "context_length": 131072,
+      "tool_support": true
+    },
+    "mistral:latest": {
+      "license": "Apache-2.0",
+      "license_url": "https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2",
+      "distribution_ok": true,
+      "parameters": "7B",
+      "context_length": 32768,
+      "tool_support": true
+    },
+    "llama3.2:1b": {
+      "license": "Meta-Llama-Community",
+      "license_url": "https://github.com/meta-llama/llama3/blob/main/LICENSE",
+      "distribution_ok": true,
+      "restrictions": ["Attribution required", "No LLM training", "700M MAU limit"],
+      "parameters": "1B",
+      "context_length": 131072,
+      "tool_support": true
+    },
+    "llama3.2:3b": {
+      "license": "Meta-Llama-Community",
+      "license_url": "https://github.com/meta-llama/llama3/blob/main/LICENSE",
+      "distribution_ok": true,
+      "restrictions": ["Attribution required", "No LLM training", "700M MAU limit"],
+      "parameters": "3B",
+      "context_length": 131072,
+      "tool_support": true
+    },
+    "llama3.1:latest": {
+      "license": "Meta-Llama-Community",
+      "license_url": "https://github.com/meta-llama/llama3/blob/main/LICENSE",
+      "distribution_ok": true,
+      "restrictions": ["Attribution required", "No LLM training", "700M MAU limit"],
+      "parameters": "8B",
+      "context_length": 131072,
+      "tool_support": true
+    },
+    "llama3.1:70b": {
+      "license": "Meta-Llama-Community",
+      "license_url": "https://github.com/meta-llama/llama3/blob/main/LICENSE",
+      "distribution_ok": true,
+      "restrictions": ["Attribution required", "No LLM training", "700M MAU limit"],
+      "parameters": "70B",
+      "context_length": 131072,
+      "tool_support": true
+    },
+    "llama3.1:70b-q4_K_M": {
+      "license": "Meta-Llama-Community",
+      "license_url": "https://github.com/meta-llama/llama3/blob/main/LICENSE",
+      "distribution_ok": true,
+      "restrictions": ["Attribution required", "No LLM training", "700M MAU limit"],
+      "parameters": "70B (Q4)",
+      "context_length": 131072,
+      "tool_support": true
+    }
   }
 }

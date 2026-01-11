@@ -1,0 +1,6 @@
+{
+  "models": ["qwen2.5:32b-instruct", "llama3.1:70b-q4_K_M"],
+  "tier": "24gb",
+  "vram_max_gib": 24,
+  "notes": "RTX 3090, RTX 4090. Fits 32B models or Q4-quantized 70B."
+}

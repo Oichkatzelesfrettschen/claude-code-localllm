@@ -1,0 +1,6 @@
+{
+  "models": ["llama3.2:3b", "qwen2.5:3b-instruct"],
+  "tier": "6gb",
+  "vram_max_gib": 6,
+  "notes": "GTX 1060 6GB, GTX 1660, RTX 2060. Comfortable for 3B models."
+}

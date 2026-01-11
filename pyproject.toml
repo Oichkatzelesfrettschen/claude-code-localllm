@@ -1,0 +1,61 @@
+[project]
+name = "claude-code-localllm"
+version = "0.1.0"
+description = "Local LLM routing and tooling for Claude Code"
+requires-python = ">=3.10"
+readme = "README.md"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    "__pycache__",
+    "venv",
+    ".venv",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "F",      # pyflakes
+    "W",      # pycodestyle warnings
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "UP",     # pyupgrade
+    "PL",     # pylint
+    "RUF",    # ruff-specific
+]
+ignore = [
+    "PLR0913",  # too-many-arguments (probes have many config options)
+    "PLR2004",  # magic-value-comparison (OK in CLI tools)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["tools"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = false
+warn_return_any = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+check_untyped_defs = true
+ignore_missing_imports = true
+exclude = [
+    "venv/",
+    ".venv/",
+    "tests/",
+]
+
+[[tool.mypy.overrides]]
+module = "tools.local_llm.*"
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
