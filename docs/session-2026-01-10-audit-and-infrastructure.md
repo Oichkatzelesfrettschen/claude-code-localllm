@@ -89,9 +89,11 @@ pre-commit-run     # Run all pre-commit hooks
 | 10GB | <=10 GiB | RTX 3080 10GB | 590+ | qwen2.5:7b, llama3.1:latest |
 | 11GB | <=11 GiB | GTX 1080 Ti, RTX 2080 Ti | 580.x (GTX 1080 Ti), 590+ (RTX 2080 Ti) | qwen2.5:7b, llama3.1:latest, mistral:latest |
 | 12GB | <=12 GiB | RTX 3060 12GB, RTX 4070 | 590+ | qwen2.5:7b, llama3.1:latest, mistral:latest |
-| 16GB | <=16 GiB | RTX 4080, RTX 5080 | 590+ | qwen2.5:14b, llama3.1:latest |
+| 16GB | <=16 GiB | RTX 4080, RTX 5080, RTX 4060 Ti 16GB | 590+ | qwen2.5:14b, llama3.1:latest |
 | 24GB | <=24 GiB | RTX 3090, RTX 4090 | 590+ | qwen2.5:32b, llama3.1:70b-q4 |
 | 32GB+ | >32 GiB | RTX 5090, A100, H100 | 590+ | qwen2.5:72b, llama3.1:70b |
+
+**Note:** RTX 5090 and RTX 5080 (Blackwell architecture) support CUDA Tile programming model (CUDA 13.1+). See Section 10 for details.
 
 ### 2.3 New Probe Configuration Files
 
@@ -316,14 +318,222 @@ make pre-commit-run
 
 ---
 
-## 10. Next Steps
+## 10. CUDA 13.1 and CUDA Tile Architecture Support
+
+### 10.1 Overview
+
+CUDA 13.1 (released December 2025) introduces **CUDA Tile**, the most significant update to the CUDA platform in 20 years. This release shifts GPU programming from thread-level (SIMT) to tile-level abstractions, with **exclusive support for NVIDIA Blackwell architecture**.
+
+### 10.2 CUDA Tile Programming Model
+
+**Traditional SIMT vs CUDA Tile:**
+
+| Aspect | Traditional SIMT | CUDA Tile |
+|--------|-----------------|-----------|
+| **Abstraction Level** | Individual threads (thousands to manage) | Data tiles (chunks) |
+| **Hardware Details** | Manual warp scheduling, memory alignment | Automatic optimization by compiler |
+| **Tensor Core Usage** | Manual implementation | Automatic when appropriate |
+| **Portability** | Architecture-specific tuning required | Forward-compatible across generations |
+
+**Key Benefits:**
+- **Hardware Abstraction**: Automatically leverages tensor cores, TMA (Tensor Memory Accelerators), and specialized hardware
+- **Future-Proof Code**: TileIR (virtual ISA) ensures code works on current and future GPU architectures
+- **Simplified Maintenance**: Focus on algorithms instead of hardware micro-management
+- **Performance**: Major gains in AI/HPC workloads, group GEMM operations, and LLM inference
+
+### 10.3 CUDA Tile Components
+
+#### 10.3.1 TileIR (Tile Intermediate Representation)
+
+- **Virtual ISA** for tile-based CUDA programming (analogous to PTX for SIMT)
+- Compilers map tile kernels onto hardware threads and tensor cores
+- Enables easier framework and DSL development
+- Provides forward compatibility guarantees
+
+#### 10.3.2 cuTile Python DSL
+
+- **Domain-Specific Language** for Python developers
+- Enables simple authoring of array- and tile-based GPU kernels
+- Instant accessibility for AI and Python-centric workflows
+- C++ support coming in future releases
+
+### 10.4 Blackwell Architecture Hardware Requirements
+
+CUDA Tile is **exclusively supported** on NVIDIA Blackwell GPUs. Unlike previous releases where features spanned multiple architectures, Blackwell is split into two distinct compute capability families:
+
+#### 10.4.1 Compute Capability 10.x (Blackwell Datacenter)
+
+| GPU Model | Memory | Power | Compute Throughput | Use Case |
+|-----------|--------|-------|-------------------|----------|
+| **B100** | 192 GB HBM3e | 700W | FP4: 14 PFLOPS | Enterprise AI, LLM training |
+| **B200** | 192 GB HBM3e | 1000-1200W | FP4: 18 PFLOPS, FP8: 9 PFLOPS | Large-scale training/inference |
+| **GB200** (Grace Blackwell) | System-scale | Multi-node (14 kW/node) | Rack-scale (72 GPUs) | HPC clusters, massive AI |
+
+**Target:** High-performance computing (HPC) and massive AI training clusters
+
+#### 10.4.2 Compute Capability 12.x (Blackwell RTX/Workstation)
+
+| GPU Model | Memory | Target Use |
+|-----------|--------|------------|
+| **RTX 5090** | GDDR7 | Consumer gaming, creator workloads |
+| **RTX 5080** | GDDR7 | Gaming, content creation |
+| **RTX 6000 Pro** | GDDR7 | Professional rendering, HPC workstation |
+
+**Target:** Consumer gaming and professional visualization/workstations
+
+### 10.5 Driver and Software Requirements
+
+#### 10.5.1 Minimum Driver Versions
+
+| OS Platform | Minimum Driver | Recommended Branch | Notes |
+|-------------|---------------|-------------------|-------|
+| **Linux (x86_64 / ARM64)** | **590.35+** | **R590** (Production) | Data center may use R580 for stability |
+| **Windows 11 / 10** | **591.44+** | **R590** (Game Ready / Studio) | DCH drivers default for modern systems |
+
+**Important Notes:**
+- CUDA 13.1 Toolkit **does not bundle** the display driver—install separately
+- Drivers are backward compatible, but check [CUDA Compatibility Guide](https://docs.nvidia.com/deeplearning/cuda/cuda-compatibility-guide/index.html)
+- Legacy cubin-only binaries must be rebuilt; **include PTX** for forward compatibility
+
+#### 10.5.2 API and OS Support
+
+- **DirectX:** 12 Ultimate
+- **Vulkan:** 1.4
+- **Shader Model:** 6.8
+- **OpenCL:** 3.0 (64-bit only)
+- **CUDA Toolkit:** 13.x+ required
+
+### 10.6 Architecture Compatibility Matrix
+
+| Architecture | Compute Capability | CUDA Tile Support | Driver Branch | Examples |
+|--------------|-------------------|------------------|---------------|----------|
+| **Blackwell** | 10.x, 12.x | ✅ Yes | R590+ | RTX 5090, B100, B200, GB200 |
+| **Hopper** | 9.0 | ❌ No (Toolkit only) | R525+ | H100, H200 |
+| **Ada Lovelace** | 8.9 | ❌ No (Toolkit only) | R525+ | RTX 4090, RTX 4080 |
+| **Ampere** | 8.0, 8.6 | ❌ No (Toolkit only) | R450+ | A100, RTX 3090, RTX 30-series |
+| **Turing** | 7.5 | ❌ No (Toolkit only) | R418+ | RTX 2080 Ti, GTX 1650 |
+| **Volta** | 7.0 | ❌ Deprecated | R384+ (legacy) | V100, Titan V |
+| **Pascal** | 6.x | ❌ Deprecated | R384+ (legacy) | GTX 1080 Ti, P100 |
+
+**Key Point:** CUDA 13.1 **Toolkit** (cuBLAS, cuDNN, compilers) supports older architectures, but **CUDA Tile** programming model only works on Blackwell.
+
+### 10.7 CUDA Tile Feature Scope
+
+While CUDA Tile is Blackwell-exclusive, the CUDA 13.1 Toolkit provides:
+
+- **Full Support:** Blackwell (10.x/12.x), Hopper (9.0), Ada (8.9), Ampere (8.0/8.6), Turing (7.5)
+- **Deprecated/Legacy:** Volta (7.0) and Pascal (6.x) support significantly reduced
+- **Enhanced Libraries:** cuBLAS, cuSPARSE, NCCL 2.28 with fused operations
+- **Profiling:** Nsight Compute with tile kernel profiling support
+- **Debug Tools:** Compute Sanitizer with memory error detection
+
+### 10.8 Programming Model Deep Dive
+
+**Tile-Based Execution Model:**
+
+```
+Traditional SIMT:              CUDA Tile:
+┌──────────────┐              ┌──────────────┐
+│ Thread 0     │              │ Tile [0,0]   │
+│ Thread 1     │              │ Tile [0,1]   │
+│ Thread 2     │   ────>      │ Tile [1,0]   │
+│ ...          │              │ Tile [1,1]   │
+│ Thread N     │              │ ...          │
+└──────────────┘              └──────────────┘
+ Manual warp                   Auto-optimized
+ scheduling                    tensor cores
+```
+
+**Advantages for Local LLM Workloads:**
+- Simplified kernel development for transformer models
+- Automatic utilization of Tensor Cores for matrix multiplications
+- Better memory hierarchy management (shared memory, TMA)
+- Reduced development complexity for custom kernels
+
+### 10.9 Implications for Local LLM Routing
+
+#### 10.9.1 Updated VRAM Tier Matrix (32GB+ Tier)
+
+The 32GB+ tier now includes Blackwell consumer GPUs:
+
+| GPU | VRAM | Compute Capability | CUDA Tile | Driver |
+|-----|------|-------------------|-----------|--------|
+| **RTX 5090** | 32GB GDDR7 | 10.x | ✅ Yes | R590+ |
+| **RTX 5080** | 16GB GDDR7 | 10.x | ✅ Yes | R590+ |
+| A100 80GB | 80GB HBM2e | 8.0 (Ampere) | ❌ No | R450+ |
+| H100 | 80GB HBM3 | 9.0 (Hopper) | ❌ No | R525+ |
+
+#### 10.9.2 Performance Considerations
+
+**Blackwell-Specific Optimizations:**
+- LLMs using CUDA Tile may see 2-3x inference speedup
+- Group GEMM operations benefit significantly
+- Reduced kernel launch overhead for attention mechanisms
+- Better multi-tenant GPU resource allocation with Green Contexts
+
+**Backward Compatibility:**
+- Existing CUDA 12.x code continues to work on Blackwell
+- No immediate migration required, but CUDA Tile offers long-term benefits
+- PTX inclusion ensures forward compatibility
+
+#### 10.9.3 Model Recommendations
+
+For Blackwell GPUs (RTX 5090, RTX 5080, B100, B200):
+- Prefer models with CUDA 13.1-optimized inference engines
+- Frameworks: PyTorch 2.5+, TensorFlow 2.18+, vLLM with CUDA 13.1 support
+- Quantization: FP4/FP8 support native to Blackwell tensor cores
+
+### 10.10 Resources and References
+
+#### Official Documentation
+- [NVIDIA CUDA 13.1 Release Blog](https://developer.nvidia.com/blog/nvidia-cuda-13-1-powers-next-gen-gpu-programming-with-nvidia-cuda-tile-and-performance-gains/)
+- [CUDA Tile Programming Guide](https://developer.nvidia.com/blog/focus-on-your-algorithm-nvidia-cuda-tile-handles-the-hardware/)
+- [Blackwell Compatibility Guide](https://docs.nvidia.com/cuda/blackwell-compatibility-guide/index.html)
+- [CUDA GPU Compute Capability Table](https://developer.nvidia.com/cuda/gpus)
+
+#### Video Resources
+- [The Future Is Tiled: Using CuTile & TileIR (Jared Roesch, NVIDIA)](https://www.youtube.com/watch?v=UEdGJGz8Eyg)
+  - Deep dive into cuTile DSL and TileIR
+  - Kernel development targeting Blackwell architecture
+  - Practical examples and performance optimization
+
+#### Technical Analysis
+- [NVIDIA Announces CUDA Tile with CUDA 13.1 - TechPowerUp](https://www.techpowerup.com/343740/nvidia-announces-cuda-tile-with-cuda-13-1)
+- [NVIDIA CUDA Tile: Making GPU Programming Simpler - AlphaMatch](https://www.alphamatch.ai/blog/nvidia-cuda-tile-explained)
+- [Blackwell Architecture Wikipedia](https://en.wikipedia.org/wiki/Blackwell_(microarchitecture))
+
+### 10.11 Migration Path for Local LLM Users
+
+#### Current Hardware (Pre-Blackwell)
+- Continue using CUDA 12.x with existing drivers
+- No action required; CUDA 13.1 toolkit provides backward compatibility
+- Focus on optimizing model selection for VRAM tier
+
+#### Upgrading to Blackwell
+1. **Hardware:** RTX 5090 (32GB) or RTX 5080 (16GB) for consumer
+2. **Driver:** Install R590+ driver (not bundled with CUDA Toolkit)
+3. **Software:** Update to CUDA 13.1 toolkit
+4. **Frameworks:** Ensure PyTorch/TensorFlow/vLLM supports CUDA 13.1
+5. **Optional:** Migrate critical kernels to CUDA Tile for performance gains
+
+#### Performance Expectations
+- **Without CUDA Tile:** 10-20% improvement from Blackwell hardware alone
+- **With CUDA Tile:** 2-3x improvement for transformer inference workloads
+- **Memory Bandwidth:** Significant gains with GDDR7 (RTX 5090: 1.5 TB/s)
+
+---
+
+## 11. Next Steps
 
 1. Run `make test` to verify unit tests pass
 2. Run `make lint` to verify linting passes
 3. Commit all changes with detailed message
 4. Create PR with this documentation
+5. Monitor CUDA 13.1 adoption for local LLM inference engines
+6. Update router logic for Blackwell GPU detection when available
 
 ---
 
-*Generated: 2026-01-10*
+*Generated: 2026-01-10*  
+*Updated: 2026-01-12 (CUDA Tile documentation)*  
 *Session: Comprehensive repository audit and infrastructure setup*
