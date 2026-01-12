@@ -103,7 +103,7 @@ lint-shell:
 lint: lint-python lint-shell json-lint
 
 typecheck:
-	mypy tools/local_llm/ --ignore-missing-imports
+	mypy tools/local_llm/
 
 test:
 	pytest tests/
