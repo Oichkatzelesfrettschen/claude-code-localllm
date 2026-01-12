@@ -106,7 +106,7 @@ typecheck:
 	mypy tools/local_llm/ --ignore-missing-imports
 
 test:
-	pytest tests/ -v
+	pytest tests/
 
 pre-commit-install:
 	pre-commit install
