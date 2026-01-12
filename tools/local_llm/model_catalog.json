@@ -69,7 +69,7 @@
     {
       "tier": "32gb+",
       "vram_max_gib": 32,
-      "notes": "RTX 5090, A100 40GB/80GB, H100. Full 70B+ models. Driver: 590+",
+      "notes": "RTX 5090, A100 40GB/80GB, H100. Full 70B+ models. Driver: 590+. RTX 5090 supports CUDA Tile (CUDA 13.1+).",
       "example_gpus": ["RTX 5090", "A100 40GB", "A100 80GB", "H100"]
     }
   ],
