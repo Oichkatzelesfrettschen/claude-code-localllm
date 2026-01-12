@@ -335,6 +335,472 @@ The Tesla architecture (not to be confused with Tesla-branded HPC products) repr
 5. **Performance**: 200-300x slower than modern GPUs, unusable latency
 6. **No Path Forward**: No upgrade path except full hardware replacement
 
+#### 3.3.5 The Efficiency Epoch: Kepler, Maxwell, and Pascal (2012-2017)
+
+The period from 2012 to 2017 marked a fundamental shift in GPU architecture from raw computational power to performance-per-watt efficiency. This section provides an exhaustive technical reference for the Kepler, Maxwell, and Pascal generations—the minimum viable architectures for modern LLM inference.
+
+---
+
+### 3.4 Kepler Architecture (2012-2014): The Efficiency Foundation
+
+**Overview:**
+Kepler (GKxxx) represented NVIDIA's first architecture designed with power efficiency as a primary goal. It introduced the SMX (Streaming Multiprocessor with eXtended capabilities), dynamic parallelism, and Hyper-Q technology.
+
+#### 3.4.1 Kepler Product Lines and Specifications
+
+**GK104 - Consumer Gaming (Compute Capability 3.0)**
+
+| Model | CUDA Cores | SMX Units | Base/Boost Clock | Memory | TDP | Released |
+|-------|------------|-----------|------------------|--------|-----|----------|
+| **GTX 680** | 1536 | 8 | 1006/1058 MHz | 2GB GDDR5 | 195W | March 2012 |
+| **GTX 770** | 1536 | 8 | 1046/1085 MHz | 2GB/4GB GDDR5 | 230W | May 2013 |
+| **GTX 760** | 1152 | 6 | 980/1032 MHz | 2GB/4GB GDDR5 | 170W | June 2013 |
+| **GTX 670** | 1344 | 7 | 915/980 MHz | 2GB GDDR5 | 170W | May 2012 |
+| **GTX 660 Ti** | 1344 | 7 | 915/980 MHz | 2GB GDDR5 | 150W | August 2012 |
+| **GTX 660** | 960 | 5 | 980/1033 MHz | 2GB GDDR5 | 140W | September 2012 |
+| **GTX 650 Ti** | 768 | 4 | 928/N/A MHz | 1GB/2GB GDDR5 | 110W | October 2012 |
+
+**GK110 - High Performance Computing (Compute Capability 3.5)**
+
+| Model | CUDA Cores | SMX Units | Base/Boost Clock | Memory | TDP | Released |
+|-------|------------|-----------|------------------|--------|-----|----------|
+| **GTX Titan** | 2688 | 14 | 837/876 MHz | 6GB GDDR5 | 250W | February 2013 |
+| **GTX Titan Black** | 2880 | 15 | 889/980 MHz | 6GB GDDR5 | 250W | February 2014 |
+| **GTX 780 Ti** | 2880 | 15 | 875/928 MHz | 3GB GDDR5 | 250W | November 2013 |
+| **GTX 780** | 2304 | 12 | 863/900 MHz | 3GB GDDR5 | 250W | May 2013 |
+| **Tesla K40** | 2880 | 15 | 745/875 MHz | 12GB GDDR5 | 235W | November 2013 |
+| **Tesla K20X** | 2688 | 14 | 732/N/A MHz | 6GB GDDR5 | 235W | November 2012 |
+| **Tesla K20** | 2496 | 13 | 706/N/A MHz | 5GB GDDR5 | 225W | November 2012 |
+| **Quadro K6000** | 2880 | 15 | 902/N/A MHz | 12GB GDDR5 | 225W | July 2013 |
+
+**GK106/GK107 - Mid-range/Entry-level (Compute Capability 3.0)**
+
+| Model | CUDA Cores | SMX Units | Base/Boost Clock | Memory | TDP | Released |
+|-------|------------|-----------|------------------|--------|-----|----------|
+| **GTX 650** | 384 | 2 | 1058/N/A MHz | 1GB GDDR5 | 64W | September 2012 |
+| **GT 640** | 384 | 2 | 901/N/A MHz | 1GB/2GB DDR3 | 49W | June 2012 |
+
+#### 3.4.2 Kepler Architectural Features
+
+**SMX (Streaming Multiprocessor eXtended):**
+- 192 CUDA cores per SMX (vs 32 in Fermi)
+- 64KB configurable shared memory/L1 cache
+- 64K 32-bit registers per SMX
+- 48 KB texture cache/read-only data cache
+
+**Key Innovations:**
+- **Dynamic Parallelism**: GPU threads can launch other GPU threads
+- **Hyper-Q**: Up to 32 simultaneous hardware work queues
+- **GPUDirect RDMA**: Direct memory access for InfiniBand/other devices
+- **Grid Management Unit**: Hardware task scheduling
+
+**Memory Hierarchy:**
+- L1 Cache: Up to 48 KB per SMX (configurable with shared memory)
+- L2 Cache: 1536 KB (GK110), 512 KB (GK104)
+- Read-only data cache: 48 KB per SMX
+- Texture cache: 12-48 KB per SMX
+
+#### 3.4.3 Kepler Driver and SDK Support
+
+**Final Driver Versions:**
+
+| Platform | Driver Version | Branch | EOL Date | Notes |
+|----------|---------------|--------|----------|-------|
+| **Linux** | 470.256.02 | R470 | September 2024 | Security updates only |
+| **Windows 10/11** | 472.84 | R470 | September 2024 | Security updates only |
+| **Windows 7/8.1** | 474.44 | R470 | January 2022 | Discontinued |
+
+**CUDA and SDK Support:**
+
+| Component | Final Version | Release Date | Notes |
+|-----------|--------------|--------------|-------|
+| **CUDA Toolkit** | 11.8.0 | October 2022 | Last full support |
+| **cuDNN** | 8.9.7 | December 2023 | Last compatible version |
+| **cuBLAS** | 11.11.3.6 | CUDA 11.8 | Included in toolkit |
+| **NCCL** | 2.15.5 | November 2022 | Multi-GPU communication |
+| **TensorRT** | 8.6 GA | January 2024 | Inference optimization |
+
+**Framework Compatibility:**
+
+| Framework | Final Compatible Version | Python Version | Notes |
+|-----------|------------------------|----------------|-------|
+| **PyTorch** | 2.0.1 | 3.8-3.11 | With CUDA 11.8 |
+| **TensorFlow** | 2.13.1 | 3.8-3.11 | Last Kepler support |
+| **JAX** | 0.4.13 | 3.9-3.11 | Limited support |
+| **ONNX Runtime** | 1.16.3 | 3.8-3.11 | GPU execution provider |
+
+#### 3.4.4 Python Environment Setup for Kepler
+
+**Recommended Python Environment (CUDA 11.8):**
+
+```bash
+# Create isolated environment
+conda create -n kepler-llm python=3.10
+conda activate kepler-llm
+
+# Install CUDA 11.8 compatible PyTorch
+pip install torch==2.0.1 torchvision==0.15.2 --index-url https://download.pytorch.org/whl/cu118
+
+# Install compatible transformers and dependencies
+pip install transformers==4.30.2
+pip install accelerate==0.20.3
+pip install bitsandbytes==0.39.1  # Quantization support
+pip install sentencepiece==0.1.99
+pip install protobuf==3.20.3
+
+# Install ollama for LLM serving (optional)
+# Note: Ollama requires newer GPUs, manual build needed for Kepler
+```
+
+**Compatible LLM Models for Kepler:**
+- **Minimum**: 2GB VRAM → qwen2.5:0.5b-instruct, llama3.2:1b (4-bit quantization)
+- **Recommended**: 4GB+ VRAM → llama3.2:3b, qwen2.5:3b-instruct (4-bit)
+- **Limitations**: No FP16 acceleration, limited tensor core support, 4-bit quantization essential
+
+---
+
+### 3.5 Maxwell Architecture (2014-2016): The Power Efficiency Revolution
+
+**Overview:**
+Maxwell (GMxxx) delivered unprecedented performance-per-watt improvements through aggressive clock gating, refined SM design, and the introduction of the MFAA (Multi-Frame Anti-Aliasing) technique. First architecture to break 1 GHz boost clocks sustainably.
+
+#### 3.5.1 Maxwell Product Lines and Specifications
+
+**GM107 - Entry Maxwell (Compute Capability 5.0)**
+
+| Model | CUDA Cores | SM Units | Base/Boost Clock | Memory | TDP | Released |
+|-------|------------|----------|------------------|--------|-----|----------|
+| **GTX 750 Ti** | 640 | 5 | 1020/1085 MHz | 2GB GDDR5 | 60W | February 2014 |
+| **GTX 750** | 512 | 4 | 1020/1085 MHz | 1GB/2GB GDDR5 | 55W | February 2014 |
+
+**GM204 - Mainstream Maxwell (Compute Capability 5.2)**
+
+| Model | CUDA Cores | SM Units | Base/Boost Clock | Memory | TDP | Released |
+|-------|------------|----------|------------------|--------|-----|----------|
+| **GTX 980** | 2048 | 16 | 1126/1216 MHz | 4GB GDDR5 | 165W | September 2014 |
+| **GTX 970** | 1664 | 13 | 1050/1178 MHz | 4GB GDDR5 | 145W | September 2014 |
+| **GTX 960** | 1024 | 8 | 1127/1178 MHz | 2GB/4GB GDDR5 | 120W | January 2015 |
+
+**GM200 - High-end Maxwell (Compute Capability 5.2)**
+
+| Model | CUDA Cores | SM Units | Base/Boost Clock | Memory | TDP | Released |
+|-------|------------|----------|------------------|--------|-----|----------|
+| **GTX Titan X** | 3072 | 24 | 1000/1075 MHz | 12GB GDDR5 | 250W | March 2015 |
+| **GTX 980 Ti** | 2816 | 22 | 1000/1075 MHz | 6GB GDDR5 | 250W | June 2015 |
+| **Tesla M40** | 3072 | 24 | 948/1114 MHz | 12GB/24GB GDDR5 | 250W | November 2015 |
+| **Quadro M6000** | 3072 | 24 | 988/N/A MHz | 12GB/24GB GDDR5 | 250W | March 2015 |
+
+**GM206/GM107 - Mid-range (Compute Capability 5.2/5.0)**
+
+| Model | CUDA Cores | SM Units | Base/Boost Clock | Memory | TDP | Released |
+|-------|------------|----------|------------------|--------|-----|----------|
+| **GTX 950** | 768 | 6 | 1024/1188 MHz | 2GB GDDR5 | 90W | August 2015 |
+| **GTX 940MX** | 384 | 3 | 1122/1176 MHz | 2GB GDDR5 | 30W | Q1 2016 |
+
+#### 3.5.2 Maxwell Architectural Features
+
+**SM (Streaming Multiprocessor) - Second Generation Maxwell:**
+- 128 CUDA cores per SM (GM204/GM200)
+- 96 KB shared memory per SM
+- Improved instruction scheduling
+- Dynamic load balancing
+
+**Key Innovations:**
+- **MFAA**: Multi-Frame Anti-Aliasing for better performance
+- **DSR**: Dynamic Super Resolution for image quality
+- **Voxel Global Illumination**: Real-time lighting
+- **H.265 (HEVC) Decode**: Hardware video acceleration
+
+**Memory Optimizations:**
+- Improved memory controller efficiency
+- Delta color compression
+- L2 cache: 2048 KB (GM200), 1024 KB (GM204)
+- Lower latency memory access
+
+#### 3.5.3 Maxwell Driver and SDK Support
+
+**Final Driver Versions:**
+
+| Platform | Driver Version | Branch | Transition Date | Notes |
+|----------|---------------|--------|-----------------|-------|
+| **Linux** | 580.x (final) | R580 | October 2025 | Security updates through October 2028 |
+| **Windows 10/11** | 580.x | R580 | October 2025 | Critical updates only through 2028 |
+
+**CUDA and SDK Support:**
+
+| Component | Final Version | Release Date | Notes |
+|-----------|--------------|--------------|-------|
+| **CUDA Toolkit** | 12.6.2 | September 2024 | Last version before deprecation |
+| **cuDNN** | 9.5.1 | October 2024 | Final Maxwell support |
+| **cuBLAS** | 12.6.2.1 | CUDA 12.6 | Matrix operations |
+| **NCCL** | 2.23.4 | September 2024 | Multi-GPU |
+| **TensorRT** | 10.5 | October 2024 | Inference optimization |
+
+**Framework Compatibility:**
+
+| Framework | Final Compatible Version | Python Version | Notes |
+|-----------|------------------------|----------------|-------|
+| **PyTorch** | 2.4.1 | 3.9-3.12 | With CUDA 12.6 |
+| **TensorFlow** | 2.17.0 | 3.9-3.12 | Last Maxwell support |
+| **JAX** | 0.4.35 | 3.10-3.12 | Full support |
+| **ONNX Runtime** | 1.19.2 | 3.9-3.12 | GPU execution provider |
+
+#### 3.5.4 Python Environment Setup for Maxwell
+
+**Recommended Python Environment (CUDA 12.6):**
+
+```bash
+# Create environment
+conda create -n maxwell-llm python=3.11
+conda activate maxwell-llm
+
+# Install CUDA 12.6 compatible PyTorch
+pip install torch==2.4.1 torchvision==0.19.1 --index-url https://download.pytorch.org/whl/cu124
+
+# Install LLM stack
+pip install transformers==4.44.2
+pip install accelerate==0.34.2
+pip install bitsandbytes==0.43.3  # 4-bit/8-bit quantization
+pip install sentencepiece==0.2.0
+pip install safetensors==0.4.5
+
+# Install vLLM for efficient inference (with CUDA 12.x)
+pip install vllm==0.6.1  # Supports Maxwell with CUDA 12.x
+```
+
+**Compatible LLM Models for Maxwell:**
+- **4GB VRAM**: qwen2.5:3b-instruct, llama3.2:3b (8-bit quantization)
+- **6GB+ VRAM**: qwen2.5:7b-instruct, mistral:7b (4-bit quantization)
+- **12GB VRAM**: llama3.1:8b (8-bit), qwen2.5:14b-instruct (4-bit)
+- **Advantages**: Better FP16 support than Kepler, improved memory bandwidth
+
+---
+
+### 3.6 Pascal Architecture (2016-2018): The Memory Revolution
+
+**Overview:**
+Pascal (GPxxx) introduced HBM2 memory, NVLink interconnect, and unified virtual memory. First consumer architecture with practical FP16 acceleration and the foundation for modern deep learning.
+
+#### 3.6.1 Pascal Product Lines and Specifications
+
+**GP102 - High-end Pascal (Compute Capability 6.1)**
+
+| Model | CUDA Cores | SM Units | Base/Boost Clock | Memory | TDP | Released |
+|-------|------------|----------|------------------|--------|-----|----------|
+| **GTX 1080 Ti** | 3584 | 28 | 1481/1582 MHz | 11GB GDDR5X | 250W | March 2017 |
+| **GTX 1080** | 2560 | 20 | 1607/1733 MHz | 8GB GDDR5X | 180W | May 2016 |
+| **GTX Titan Xp** | 3840 | 30 | 1417/1531 MHz | 12GB GDDR5X | 250W | April 2017 |
+| **Titan X (Pascal)** | 3584 | 28 | 1417/1531 MHz | 12GB GDDR5X | 250W | August 2016 |
+| **Quadro P6000** | 3840 | 30 | 1506/1645 MHz | 24GB GDDR5X | 250W | October 2016 |
+| **Tesla P40** | 3840 | 30 | 1303/1531 MHz | 24GB GDDR5 | 250W | September 2016 |
+
+**GP104 - Mainstream Pascal (Compute Capability 6.1)**
+
+| Model | CUDA Cores | SM Units | Base/Boost Clock | Memory | TDP | Released |
+|-------|------------|----------|------------------|--------|-----|----------|
+| **GTX 1070 Ti** | 2432 | 19 | 1607/1683 MHz | 8GB GDDR5 | 180W | November 2017 |
+| **GTX 1070** | 1920 | 15 | 1506/1683 MHz | 8GB GDDR5 | 150W | June 2016 |
+| **GTX 1060 6GB** | 1280 | 10 | 1506/1708 MHz | 6GB GDDR5 | 120W | July 2016 |
+| **GTX 1060 3GB** | 1152 | 9 | 1506/1708 MHz | 3GB GDDR5 | 120W | August 2016 |
+
+**GP106/GP107/GP108 - Mid-range/Entry (Compute Capability 6.1)**
+
+| Model | CUDA Cores | SM Units | Base/Boost Clock | Memory | TDP | Released |
+|-------|------------|----------|------------------|--------|-----|----------|
+| **GTX 1050 Ti** | 768 | 6 | 1290/1392 MHz | 4GB GDDR5 | 75W | October 2016 |
+| **GTX 1050** | 640 | 5 | 1354/1455 MHz | 2GB/3GB GDDR5 | 75W | October 2016 |
+| **GT 1030** | 384 | 3 | 1228/1670 MHz | 2GB GDDR5 | 30W | May 2017 |
+
+**GP100 - HPC Pascal (Compute Capability 6.0)**
+
+| Model | CUDA Cores | SM Units | Base/Boost Clock | Memory | TDP | Released |
+|-------|------------|----------|------------------|--------|-----|----------|
+| **Tesla P100 (PCIe)** | 3584 | 56 | 1190/1328 MHz | 12GB/16GB HBM2 | 250W | June 2016 |
+| **Tesla P100 (SXM2)** | 3584 | 56 | 1189/1328 MHz | 16GB HBM2 | 300W | June 2016 |
+| **Quadro GP100** | 3584 | 56 | 1303/1430 MHz | 16GB HBM2 | 235W | March 2017 |
+
+#### 3.6.2 Pascal Architectural Features
+
+**SM (Streaming Multiprocessor) - Pascal Generation:**
+- 128 CUDA cores per SM (GP104/GP102)
+- 64 CUDA cores per SM (GP100)
+- 96 KB shared memory per SM
+- FP16 execution units (2:1 ratio with FP32)
+
+**Key Innovations:**
+- **HBM2 Memory**: 720 GB/s bandwidth (Tesla P100)
+- **NVLink**: 160 GB/s GPU-to-GPU bandwidth
+- **Unified Memory**: Automatic data migration between CPU/GPU
+- **Preemption**: Fine-grained task switching
+- **4K H.265/H.264 Encode/Decode**: Hardware video
+
+**Memory Improvements:**
+- L2 Cache: 4096 KB (GP102), 2048 KB (GP104)
+- Memory compression: Up to 2:1 effective bandwidth
+- GDDR5X: Up to 11 Gbps (GTX 1080 Ti)
+
+#### 3.6.3 Pascal Driver and SDK Support
+
+**Final Driver Versions:**
+
+| Platform | Driver Version | Branch | Transition Date | Notes |
+|----------|---------------|--------|-----------------|-------|
+| **Linux** | 580.x (final) | R580 | October 2025 | Security updates through October 2028 |
+| **Windows 10/11** | 580.x | R580 | October 2025 | Critical updates only through 2028 |
+
+**CUDA and SDK Support:**
+
+| Component | Final Version | Release Date | Notes |
+|-----------|--------------|--------------|-------|
+| **CUDA Toolkit** | 12.6.2 | September 2024 | Last version before CUDA 13 deprecation |
+| **cuDNN** | 9.5.1 | October 2024 | Final Pascal support |
+| **cuBLAS** | 12.6.2.1 | CUDA 12.6 | Optimized matrix operations |
+| **NCCL** | 2.23.4 | September 2024 | Multi-GPU communication |
+| **TensorRT** | 10.5 | October 2024 | Inference optimization |
+
+**Framework Compatibility:**
+
+| Framework | Final Compatible Version | Python Version | Notes |
+|-----------|------------------------|----------------|-------|
+| **PyTorch** | 2.4.1 | 3.9-3.12 | With CUDA 12.6, full FP16 support |
+| **TensorFlow** | 2.17.0 | 3.9-3.12 | Last Pascal support |
+| **JAX** | 0.4.35 | 3.10-3.12 | Full support with XLA |
+| **ONNX Runtime** | 1.19.2 | 3.9-3.12 | GPU execution provider |
+| **vLLM** | 0.6.1 | 3.9-3.12 | Efficient LLM serving |
+
+#### 3.6.4 Python Environment Setup for Pascal
+
+**Recommended Python Environment (CUDA 12.6):**
+
+```bash
+# Create environment
+conda create -n pascal-llm python=3.11
+conda activate pascal-llm
+
+# Install CUDA 12.6 compatible PyTorch with FP16 support
+pip install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cu124
+
+# Install comprehensive LLM stack
+pip install transformers==4.44.2
+pip install accelerate==0.34.2
+pip install bitsandbytes==0.43.3  # 4-bit/8-bit quantization
+pip install flash-attn==2.6.3  # Flash Attention for efficiency
+pip install sentencepiece==0.2.0
+pip install safetensors==0.4.5
+
+# Install vLLM for production inference
+pip install vllm==0.6.1
+
+# Install Ollama Python client (if using Ollama)
+pip install ollama==0.3.3
+```
+
+**Compatible LLM Models for Pascal:**
+- **3GB VRAM**: qwen2.5:1.5b-instruct, llama3.2:1b (FP16/INT8)
+- **4GB VRAM**: llama3.2:3b, qwen2.5:3b-instruct (INT8 or INT4)
+- **6GB VRAM**: qwen2.5:7b-instruct, mistral:7b (INT4 quantization)
+- **8GB VRAM**: llama3.1:8b (INT8), qwen2.5:7b-instruct (FP16 with small context)
+- **11GB VRAM**: llama3.1:8b (FP16), qwen2.5:14b-instruct (INT4), mistral:latest (FP16)
+- **Advantages**: Full FP16 acceleration, unified memory, optimal for 7B-8B models
+
+---
+
+### 3.7 Comprehensive GPU Selection Guide for LLM Inference
+
+#### 3.7.1 Quick Reference: GPU to LLM Model Mapping
+
+**By VRAM Capacity and Architecture:**
+
+| VRAM | Kepler (CC 3.0/3.5) | Maxwell (CC 5.0/5.2) | Pascal (CC 6.1) | Recommended Models |
+|------|---------------------|----------------------|-----------------|-------------------|
+| **2GB** | GTX 650 Ti-680 | GTX 750-950 | GTX 1050, GT 1030 | qwen2.5:0.5b-1.5b (INT4) |
+| **3GB** | - | - | GTX 1060 3GB | llama3.2:1b, qwen2.5:1.5b (INT8) |
+| **4GB** | GTX 760-770 | GTX 960-970 | GTX 1050 Ti | llama3.2:3b, qwen2.5:3b (INT4) |
+| **6GB** | GTX Titan | GTX 980 Ti | GTX 1060 6GB | qwen2.5:7b, mistral:7b (INT4) |
+| **8GB** | - | - | GTX 1070-1080 | llama3.1:8b (INT8) |
+| **11GB** | - | - | GTX 1080 Ti | qwen2.5:14b (INT4), llama3.1:8b (FP16) |
+| **12GB** | - | GTX Titan X | Titan X (Pascal) | qwen2.5:14b (INT8) |
+
+#### 3.7.2 CUDA Capability Decision Matrix
+
+**Choose GPU Based on Workload:**
+
+| Workload Type | Minimum CC | Recommended Arch | Reasoning |
+|---------------|-----------|------------------|-----------|
+| **Research/Development** | 3.5 (Kepler GK110) | Pascal+ | Need CUDA 11.8+ for modern frameworks |
+| **Production Inference** | 5.2 (Maxwell GM204) | Pascal+ | FP16 acceleration critical for latency |
+| **Fine-tuning Small Models** | 6.1 (Pascal) | Turing+ | Requires tensor cores for efficiency |
+| **Fine-tuning Large Models** | 7.5 (Turing) | Ampere+ | Multi-GPU with NVLink recommended |
+| **Quantization Research** | 5.2 (Maxwell) | Pascal+ | INT8/INT4 ops available |
+
+#### 3.7.3 Driver and CUDA Toolkit Installation Guide
+
+**For Kepler GPUs (CC 3.0-3.7):**
+
+```bash
+# Install driver 470.x (final for Kepler)
+# Ubuntu/Debian
+sudo apt-get install nvidia-driver-470
+
+# Install CUDA 11.8 (last full support)
+wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run
+sudo sh cuda_11.8.0_520.61.05_linux.run
+
+# Install cuDNN 8.9.7
+# Download from NVIDIA Developer (requires account)
+tar -xzvf cudnn-linux-x86_64-8.9.7.29_cuda11-archive.tar.xz
+sudo cp cudnn-*-archive/include/cudnn*.h /usr/local/cuda/include 
+sudo cp -P cudnn-*-archive/lib/libcudnn* /usr/local/cuda/lib64 
+sudo chmod a+r /usr/local/cuda/include/cudnn*.h /usr/local/cuda/lib64/libcudnn*
+```
+
+**For Maxwell/Pascal GPUs (CC 5.0-6.1):**
+
+```bash
+# Install driver 580.x (final for Maxwell/Pascal)
+# Ubuntu/Debian
+sudo apt-get install nvidia-driver-580
+
+# Install CUDA 12.6 (last support before deprecation)
+wget https://developer.download.nvidia.com/compute/cuda/12.6.2/local_installers/cuda_12.6.2_560.35.03_linux.run
+sudo sh cuda_12.6.2_560.35.03_linux.run
+
+# Install cuDNN 9.5.1
+# Download from NVIDIA Developer
+tar -xzvf cudnn-linux-x86_64-9.5.1.tar.xz
+sudo cp cudnn-*-archive/include/cudnn*.h /usr/local/cuda/include 
+sudo cp -P cudnn-*-archive/lib/libcudnn* /usr/local/cuda/lib64 
+sudo chmod a+r /usr/local/cuda/include/cudnn*.h /usr/local/cuda/lib64/libcudnn*
+```
+
+#### 3.7.4 Framework-Specific Compatibility Matrix
+
+**PyTorch Compatibility:**
+
+| PyTorch Version | CUDA Version | Min CC | Kepler | Maxwell | Pascal | Notes |
+|----------------|--------------|--------|--------|---------|--------|-------|
+| 2.0.1 | 11.8 | 3.5 | ✅ Yes | ✅ Yes | ✅ Yes | Last Kepler support |
+| 2.1.2 | 11.8, 12.1 | 5.0 | ❌ No | ✅ Yes | ✅ Yes | Kepler deprecated |
+| 2.4.1 | 11.8, 12.1, 12.4 | 5.0 | ❌ No | ✅ Yes | ✅ Yes | Current stable |
+| 2.5.0+ | 12.4+ | 7.0 | ❌ No | ⚠️ Legacy | ⚠️ Legacy | Maxwell/Pascal deprecated |
+
+**TensorFlow Compatibility:**
+
+| TensorFlow Version | CUDA Version | Min CC | Kepler | Maxwell | Pascal | Notes |
+|-------------------|--------------|--------|--------|---------|--------|-------|
+| 2.13.1 | 11.8 | 3.5 | ✅ Yes | ✅ Yes | ✅ Yes | Last Kepler support |
+| 2.15.0 | 12.2 | 5.2 | ❌ No | ✅ Yes | ✅ Yes | Requires Maxwell+ |
+| 2.17.0 | 12.3 | 5.2 | ❌ No | ✅ Yes | ✅ Yes | Final Maxwell/Pascal |
+| 2.18.0+ | 12.6+ | 7.0 | ❌ No | ❌ No | ❌ No | Requires Turing+ |
+
+**vLLM Compatibility:**
+
+| vLLM Version | CUDA Version | Min CC | Maxwell | Pascal | Turing+ | Notes |
+|-------------|--------------|--------|---------|--------|---------|-------|
+| 0.4.3 | 11.8, 12.1 | 5.2 | ✅ Yes | ✅ Yes | ✅ Yes | Flash Attention disabled on <7.5 |
+| 0.6.1 | 12.1-12.6 | 5.2 | ✅ Yes | ✅ Yes | ✅ Yes | Production ready |
+| 0.7.0+ | 12.4+ | 7.0 | ⚠️ Legacy | ⚠️ Legacy | ✅ Yes | Deprecation warning |
+
 ---
 
 ## 4. Model Licensing Compliance
