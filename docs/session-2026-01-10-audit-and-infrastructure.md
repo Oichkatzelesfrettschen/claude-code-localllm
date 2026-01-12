@@ -554,7 +554,7 @@ Maxwell (GMxxx) delivered unprecedented performance-per-watt improvements throug
 conda create -n maxwell-llm python=3.11
 conda activate maxwell-llm
 
-# Install CUDA 12.6 compatible PyTorch
+# Install CUDA 12.x compatible PyTorch (cu124 wheels work with CUDA 12.4-12.6)
 pip install torch==2.4.1 torchvision==0.19.1 --index-url https://download.pytorch.org/whl/cu124
 
 # Install LLM stack
@@ -677,7 +677,7 @@ Pascal (GPxxx) introduced HBM2 memory, NVLink interconnect, and unified virtual 
 conda create -n pascal-llm python=3.11
 conda activate pascal-llm
 
-# Install CUDA 12.6 compatible PyTorch with FP16 support
+# Install CUDA 12.x compatible PyTorch with FP16 support (cu124 wheels work with CUDA 12.4-12.6)
 pip install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cu124
 
 # Install comprehensive LLM stack
