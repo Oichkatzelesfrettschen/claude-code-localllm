@@ -43,7 +43,7 @@ repos:
         entry: python3 tools/local_llm/validate_router_config.py --path docs/examples/router-config.json
         language: system
         pass_filenames: false
-        files: ^docs/examples/router-config.*\.json$
+        files: ^docs/examples/router-config\.json$
 
       - id: py-compile-check
         name: Python Compile Check
