@@ -19,6 +19,21 @@ def catalog():
 
 
 def test_all_tiers_present(catalog):
+    """Test that all expected VRAM tiers are defined and no unexpected tiers exist."""
+    expected_tiers = {
+        "1gb", "2gb", "3gb", "4gb", "6gb", "8gb",
+        "10gb", "11gb", "12gb", "16gb", "24gb", "32gb+",
+    }
+    actual_tiers = {t["tier"] for t in catalog["tiers"]}
+
+    missing = expected_tiers - actual_tiers
+    assert not missing, f"Missing tiers: {missing}"
+
+    unexpected = actual_tiers - expected_tiers
+    assert not unexpected, f"Unexpected tiers: {unexpected}"
+
+
+def test_all_tiers_present(catalog):
     """Test that all expected VRAM tiers are defined."""
     expected_tiers = {
         "1gb", "2gb", "3gb", "4gb", "6gb", "8gb",
