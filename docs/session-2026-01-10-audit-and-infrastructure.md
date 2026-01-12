@@ -83,9 +83,9 @@ pre-commit-run     # Run all pre-commit hooks
 | 1GB | <=1 GiB | GT 710, GT 720 | 470.x | qwen2.5:0.5b-instruct |
 | 2GB | <=2 GiB | GT 1030, GTX 1050 2GB, GTX 950 | 580.x | qwen2.5:0.5b, qwen2.5:1.5b, llama3.2:1b |
 | 3GB | <=3 GiB | GTX 1060 3GB (Pascal), GTX 780 (Kepler) | 580.x (GTX 1060 3GB), 470.x-580.x (GTX 780) | qwen2.5:1.5b, llama3.2:1b |
-| 4GB | <=4 GiB | GTX 1050 Ti, GTX 1650, GTX 980 | 580.x (GTX 1050 Ti, GTX 980), 590+ (GTX 1650) | llama3.2:3b, qwen2.5:3b |
-| 6GB | <=6 GiB | GTX 1060 6GB (Pascal), GTX 1660 (Turing), RTX 2060 (Turing) | 580.x (GTX 1060 6GB), 590+ (GTX 1660, RTX 2060) | llama3.2:3b, qwen2.5:3b |
-| 8GB | <=8 GiB | RTX 3060, RTX 4060, RTX 2070 | 590+ | qwen2.5:7b, mistral:latest, llama3.1:latest |
+| 4GB | <=4 GiB | GTX 1050 Ti (Pascal), GTX 1650 (Turing), GTX 980 (Maxwell) | 580.x (GTX 1050 Ti, GTX 980), 590+ (GTX 1650) | llama3.2:3b, qwen2.5:3b |
+| 6GB | <=6 GiB | GTX 1060 6GB (Pascal), GTX 980 Ti, GTX 1660 (Turing), RTX 2060 (Turing) | 580.x (GTX 1060 6GB, GTX 980 Ti), 590+ (GTX 1660, RTX 2060) | llama3.2:3b, qwen2.5:3b |
+| 8GB | <=8 GiB | RTX 3060, RTX 3060 Ti, RTX 4060, RTX 2070 | 590+ | qwen2.5:7b, mistral:latest, llama3.1:latest |
 | 10GB | <=10 GiB | RTX 3080 10GB | 590+ | qwen2.5:7b, llama3.1:latest |
 | 11GB | <=11 GiB | GTX 1080 Ti, RTX 2080 Ti | 580.x (GTX 1080 Ti), 590+ (RTX 2080 Ti) | qwen2.5:7b, llama3.1:latest, mistral:latest |
 | 12GB | <=12 GiB | RTX 3060 12GB, RTX 4070 | 590+ | qwen2.5:7b, llama3.1:latest, mistral:latest |
