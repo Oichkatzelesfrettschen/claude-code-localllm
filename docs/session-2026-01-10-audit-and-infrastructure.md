@@ -135,6 +135,206 @@ Created 8 new probe_models_*.json files:
 - Kepler: GTX 780/770/760/690/680/670/660/650, GT 740/730/720/710
 - Maxwell v1: GTX 750 Ti/750
 
+### 3.3 Legacy Architecture Deep Dive: Tesla and Fermi (Pre-Kepler)
+
+The current local-llm routing documentation focuses on GPUs from Kepler (2012) forward, as these represent the minimum viable hardware for modern LLM inference. However, understanding the historical context of NVIDIA's computational evolution is critical for assessing upgrade paths and understanding why certain hardware lacks support.
+
+#### 3.3.1 Fermi Architecture (2010-2012)
+
+**Overview:**
+The Fermi generation (GF1xx codenames) marked NVIDIA's first true general-purpose GPU computing architecture. Unlike its predecessors G80 and GT200 (Tesla architecture), which were graphics-centric with compute capabilities bolted on, Fermi was engineered from the transistor level as a CPU co-processor.
+
+**Architectural Innovations:**
+- **True Memory Hierarchy**: First NVIDIA architecture with configurable L1 cache and unified L2 cache
+- **ECC Memory Support**: Error-correcting code memory for scientific computing (Tesla/Quadro only)
+- **Enhanced Double Precision**: Significant improvement over Tesla architecture for HPC workloads
+- **Unified Address Space**: Simplified memory management for CUDA applications
+- **Concurrent Kernel Execution**: Multiple kernels could execute simultaneously on the GPU
+
+**Product Lines:**
+
+| Series | Codename | Compute Capability | Example GPUs | Released |
+|--------|----------|-------------------|--------------|----------|
+| GeForce 400 | GF100 | 2.0 | GTX 470, GTX 480 | March 2010 |
+| GeForce 500 | GF110 | 2.1 | GTX 570, GTX 580, GTX 590 | November 2010 |
+| Quadro x000 | GF100/GF110 | 2.0/2.1 | Quadro 4000, Quadro 6000 | 2010-2011 |
+| Tesla C2xxx | GF100/GF110 | 2.0/2.1 | C2050, C2070, C2075 | 2010-2011 |
+
+**Compute Capabilities 2.0 vs 2.1:**
+- **CC 2.0** (GF100): GTX 470/480, Tesla C2050/C2070
+  - 512 CUDA cores (full chip)
+  - 768 KB L2 cache
+  - Up to 6 GB GDDR5
+  - Full DirectX 11 support
+  
+- **CC 2.1** (GF110): GTX 570/580/590, Tesla C2075
+  - Improved revision with efficiency fixes
+  - Enhanced geometry processing
+  - Same core feature set as 2.0 with optimizations
+
+**Driver Support Status:**
+
+| Platform | Final Driver | Branch | EOL Date | Status |
+|----------|-------------|--------|----------|--------|
+| **Linux** | 390.157 | 390.x | January 2022 | EOL - No updates |
+| **Windows 10** | 391.35 | 390.x | August 2018 | EOL - No updates |
+| **Windows 7/8.1** | 391.35 | 390.x | January 2019 | EOL - No updates |
+
+**API Support (Final):**
+- **CUDA:** Up to CUDA 8.0 (limited support)
+- **OpenCL:** 1.2
+- **OpenGL:** 4.6
+- **DirectX:** 11
+- **Vulkan:** Not supported
+
+**Why Fermi Cannot Run Modern LLMs:**
+1. **CUDA Toolkit Incompatibility**: Modern CUDA requires CC 3.0+ (Kepler or newer)
+2. **Memory Constraints**: Maximum 3GB VRAM (consumer GTX 580), insufficient for quantized 7B models
+3. **FP16/Tensor Core Absence**: No half-precision compute, critical for efficient transformer inference
+4. **Driver EOL**: No modern OS or framework support; security vulnerabilities unpatched
+5. **Performance**: Single-precision only; ~1.5 TFLOPS (GTX 580) vs 40+ TFLOPS (RTX 3060)
+
+#### 3.3.2 Tesla Architecture (2006-2010)
+
+**Overview:**
+The Tesla architecture (not to be confused with Tesla-branded HPC products) represented NVIDIA's first unified shader architecture, introducing the foundation for CUDA. The G80 and GT200 chips powered the GeForce 8, 9, 100, 200, and 300 series.
+
+**Architectural Milestones:**
+- **Unified Shader Model**: Merged pixel and vertex shaders into general-purpose stream processors
+- **CUDA Introduction**: First architecture to support CUDA programming model (2007)
+- **Scalable Design**: From 8 SMs (GeForce 8600) to 30 SMs (GeForce GTX 295)
+- **Geometry Shader Support**: DirectX 10 compliance
+
+**Product Lines:**
+
+| Series | Codename | Compute Capability | Example GPUs | Released |
+|--------|----------|-------------------|--------------|----------|
+| GeForce 8 (Early) | G80 | 1.0 | 8800 GTX, 8800 Ultra | November 2006 |
+| GeForce 8 (Later) | G92/G94/G96 | 1.1 | 8800 GT, 9800 GTX | June 2007 |
+| GeForce 9/100 | G92b/GT21x | 1.1 | 9800 GTX+, GT 240 | February 2008 |
+| GeForce 200 | GT200 | 1.3 | GTX 260, GTX 280, GTX 295 | June 2008 |
+| GeForce 300 | GT21x/GT216 | 1.2/1.3 | GT 330, GTS 350M | September 2009 |
+
+**Compute Capability Progression:**
+- **CC 1.0** (G80): First CUDA-capable GPU
+  - No atomic operations
+  - No double-precision floating point
+  - Limited shared memory (16 KB per SM)
+  
+- **CC 1.1** (G92/G94): Minor improvements
+  - Added atomic operations for global memory
+  - Warp vote functions
+  
+- **CC 1.2** (GT215/GT216): Mobile/entry-level enhancements
+  - Atomic operations for shared memory
+  
+- **CC 1.3** (GT200): High-end improvements
+  - Double-precision FP support (1/8 speed of single-precision)
+  - Larger register file
+  - Enhanced atomic operations
+
+**Driver Support Status:**
+
+| Platform | Final Driver | Branch | EOL Date | Status |
+|----------|-------------|--------|----------|--------|
+| **Linux** | 340.108 | 340.x | December 2019 | EOL - No updates |
+| **Windows 10** | Not supported | N/A | N/A | Incompatible |
+| **Windows 7** | 342.01 | 340.x | July 2017 | EOL - No updates |
+
+**API Support (Final):**
+- **CUDA:** Up to CUDA 6.5 (CC 1.x deprecated in CUDA 7.0)
+- **OpenCL:** 1.1
+- **OpenGL:** 3.3
+- **DirectX:** 10.1
+- **Vulkan:** Not supported
+
+**Why Tesla Architecture is Unsuitable for Any Modern Compute:**
+1. **CUDA Deprecation**: Compute Capability 1.x removed from CUDA 7.0+ (2015)
+2. **Memory Limitations**: Maximum 1.5 GB VRAM (GTX 295 per GPU), far below requirements
+3. **No Double-Precision**: Most models lacked DP compute entirely (except CC 1.3)
+4. **OS Incompatibility**: Windows 10/11 never officially supported
+5. **Framework Abandonment**: PyTorch, TensorFlow, and vLLM require CUDA 11.8+ (Kepler minimum)
+6. **Performance**: ~1 TFLOPS (GTX 280) vs 200+ TFLOPS (RTX 4090) - 200x slower
+
+#### 3.3.3 Historical Context: The Dawn of GPGPU Computing
+
+**Timeline of NVIDIA's Computational Evolution:**
+
+```
+2006: Tesla (G80) - First CUDA-capable GPU
+      └─ GeForce 8800 GTX: 768 MB, CC 1.0, 518 GFLOPS
+      
+2008: Tesla (GT200) - Enhanced compute features
+      └─ GeForce GTX 280: 1 GB, CC 1.3, 933 GFLOPS, double-precision
+      
+2010: Fermi (GF100/GF110) - First true compute architecture
+      └─ GeForce GTX 580: 1.5 GB, CC 2.1, 1581 GFLOPS, ECC, caches
+      
+2012: Kepler (GK104/GK110) - Efficiency revolution
+      └─ GeForce GTX 680: 2 GB, CC 3.0, 3090 GFLOPS, CUDA 11.8 support
+      
+2014: Maxwell (GM204) - Power efficiency breakthrough
+      └─ GeForce GTX 980: 4 GB, CC 5.2, 4981 GFLOPS, dynamic parallelism
+      
+2016: Pascal (GP104) - HBM2 and NVLink
+      └─ GeForce GTX 1080: 8 GB, CC 6.1, 8873 GFLOPS, unified memory
+      
+2018: Turing (TU104) - Tensor Cores for consumers
+      └─ GeForce RTX 2080: 8 GB, CC 7.5, RT cores, tensor cores, DLSS
+      
+2020: Ampere (GA102) - Efficiency + tensor core improvements
+      └─ GeForce RTX 3080: 10 GB, CC 8.6, 29770 GFLOPS, FP16/TF32
+      
+2022: Ada Lovelace (AD102) - DLSS 3, 4th-gen tensor cores
+      └─ GeForce RTX 4090: 24 GB, CC 8.9, 82580 GFLOPS, AV1 encode
+      
+2024: Blackwell (GB202) - CUDA Tile, 5th-gen tensor cores
+      └─ GeForce RTX 5090: 32 GB, CC 10.0, CUDA Tile, 1.5 TB/s bandwidth
+```
+
+**Key Inflection Points:**
+- **2006-2010 (Tesla/Fermi)**: Foundational GPGPU, impractical for LLMs
+- **2012-2016 (Kepler/Maxwell/Pascal)**: Minimum viable for modern inference (CUDA 11.8+)
+- **2018+ (Turing onwards)**: Tensor cores enable efficient transformer inference
+- **2024+ (Blackwell)**: CUDA Tile abstracts hardware, future-proofs code
+
+#### 3.3.4 Implications for Local LLM Routing
+
+**Hardware Support Matrix:**
+
+| Architecture | Compute Cap. | Driver | CUDA Toolkit | LLM Inference | Status |
+|--------------|-------------|--------|-------------|---------------|--------|
+| **Blackwell** | 10.x, 12.x | R590+ | 13.1+ | Optimal (CUDA Tile) | Current |
+| **Ada/Ampere/Turing** | 7.5-8.9 | R525+ | 11.8+ | Excellent (Tensor Cores) | Supported |
+| **Pascal/Maxwell** | 5.0-6.1 | R470-R580 | 11.8+ | Good (FP16 limited) | Supported |
+| **Kepler** | 3.0-3.7 | R470 | 11.8-12.6 | Marginal (no FP16) | Legacy |
+| **Fermi** | 2.0-2.1 | R390 (EOL) | 8.0 max | Not viable | Unsupported |
+| **Tesla** | 1.0-1.3 | R340 (EOL) | 6.5 max | Not possible | Unsupported |
+
+**Minimum Hardware Recommendations:**
+- **Absolute Minimum**: Kepler (GTX 650+) with 2GB+ VRAM, driver 470.x
+  - Only for smallest models (qwen2.5:0.5b)
+  - No FP16 acceleration, slow inference
+  - Limited framework support
+  
+- **Practical Minimum**: Pascal (GTX 1050+) with 4GB+ VRAM, driver 580.x
+  - Supports 3B models with acceptable performance
+  - FP16 mixed precision available
+  - Full framework compatibility
+  
+- **Recommended**: Turing+ (GTX 1650+) with 6GB+ VRAM, driver 590+
+  - Tensor cores for efficient inference
+  - Supports up to 7B models
+  - Optimal framework support
+
+**Why Legacy GPUs (Tesla/Fermi) are Excluded:**
+1. **Driver EOL**: Security risks, no modern OS support
+2. **CUDA Incompatibility**: Cannot compile or run CUDA 11.8+ code
+3. **Framework Abandonment**: PyTorch/TensorFlow dropped support in 2015-2016
+4. **Memory Constraints**: 1-3 GB VRAM insufficient even for 0.5B models
+5. **Performance**: 200-300x slower than modern GPUs, unusable latency
+6. **No Path Forward**: No upgrade path except full hardware replacement
+
 ---
 
 ## 4. Model Licensing Compliance
