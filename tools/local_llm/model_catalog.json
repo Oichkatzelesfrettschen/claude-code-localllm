@@ -27,7 +27,7 @@
     {
       "tier": "6gb",
       "vram_max_gib": 6,
-      "notes": "GTX 1060 6GB, GTX 1660, RTX 2060. Comfortable for 3B models. Drivers: GTX 1060/980 Ti: 580.x; GTX 1660/RTX 2060: 590+",
+      "notes": "GTX 1060 6GB, GTX 1660, RTX 2060. Comfortable for 3B models. Driver: GTX 1060/980 Ti: 580.x; GTX 1660/RTX 2060: 590+",
       "example_gpus": ["GTX 1060 6GB", "GTX 1660", "RTX 2060", "GTX 980 Ti"]
     },
     {
